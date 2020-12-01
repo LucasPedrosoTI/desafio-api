@@ -9,16 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = true)
 public class Fornecedor extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -34,5 +25,40 @@ public class Fornecedor extends AbstractEntity {
 
 	@OneToMany(mappedBy = "fornecedor")
 	private List<Produto> produtos;
+
+	public Fornecedor() {
+	}
+
+	public Fornecedor(Long id, @NotBlank @Size(min = 2) String nome,
+			@NotBlank @CNPJ @Size(min = 13, max = 15) String cnpj, List<Produto> produtos) {
+		super(id);
+		this.nome = nome;
+		this.cnpj = cnpj;
+		this.produtos = produtos;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	public List<Produto> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(List<Produto> produtos) {
+		this.produtos = produtos;
+	}
 
 }
