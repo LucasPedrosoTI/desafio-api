@@ -3,20 +3,39 @@ package com.gft.desafioapi.service;
 import static com.gft.desafioapi.utils.Coalesce.coalesce;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.FornecedorRepository;
+import com.gft.desafioapi.repository.filter.FornecedorFilter;
 
 @Service
 public class FornecedorService {
 
 	@Autowired
 	FornecedorRepository fornecedorRepository;
+
+	public Page<Fornecedor> findAllWithFilter(FornecedorFilter filter, Pageable pageable) {
+
+		String nome = "", cnpj = "";
+
+		if (Objects.nonNull(filter)) {
+			nome = coalesce(filter.getNome(), "");
+			cnpj = coalesce(filter.getCnpj(), "");
+		}
+
+		return fornecedorRepository.findByNomeContainingAndCnpjContaining(nome, cnpj, pageable);
+	}
 
 	public Fornecedor findFornecedorById(Long id) {
 		return fornecedorRepository.findById(id).orElseThrow(() -> {
@@ -34,4 +53,12 @@ public class FornecedorService {
 		return fornecedorRepository.save(new Fornecedor(id, nome, cnpj, produtos));
 
 	}
+
+	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
+		fornecedorRepository.deleteById(id);
+
+		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+
+	}
+
 }
