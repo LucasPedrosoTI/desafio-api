@@ -3,12 +3,12 @@ package com.gft.desafioapi.resource;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,14 +34,17 @@ public class ClienteResource {
 
 	@GetMapping("/{id}")
 	public Cliente findById(@PathVariable Long id) {
-		return clienteRepository.findById(id).orElseThrow(() -> {
-			throw new EmptyResultDataAccessException(1);
-		});
+		return clienteService.findClienteById(id);
 	}
 
 	@PostMapping
 	public Cliente create(@RequestBody @Valid Cliente cliente) {
 		return clienteService.create(cliente);
+	}
+
+	@PutMapping("/{id}")
+	public Cliente update(@PathVariable Long id, @RequestBody Cliente cliente) {
+		return clienteService.update(id, cliente);
 	}
 
 }

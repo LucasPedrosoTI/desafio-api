@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -48,9 +50,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler({ DataIntegrityViolationException.class })
-	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
-			WebRequest request) {
+	@ExceptionHandler({ DataIntegrityViolationException.class, ConstraintViolationException.class })
+	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
 		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
 				LocaleContextHolder.getLocale());
 		String mensagemDev = ExceptionUtils.getRootCauseMessage(ex);
