@@ -11,53 +11,61 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.utils.CustomProdutoSerializer;
+
+import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 public class Produto extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@ApiModelProperty(example = "Redmi Note 9", allowEmptyValue = false, required = true)
 	@NotBlank
 	@Size(min = 2)
 	private String nome;
 
+	@ApiModelProperty(example = "XIA01", allowEmptyValue = false, required = true)
 	@NotBlank
 	private String codigoProduto;
 
+	@ApiModelProperty(example = "1199.99", allowEmptyValue = false, required = true)
 	@NotNull
 	@Size(min = 0, max = 9999999)
 	private BigDecimal valor;
 
+	@ApiModelProperty(example = "true", allowEmptyValue = false, required = true)
 	@NotNull
 	private boolean promocao;
 
+	@ApiModelProperty(example = "1000", allowEmptyValue = false, required = true)
 	@NotNull
 	@Size(min = 0, max = 9999999)
 	private BigDecimal valorPromo;
 
-	@SuppressWarnings("unused")
+	@ApiModelProperty(example = "redmi-note9.png", allowEmptyValue = false, required = true)
 	private String imagem;
 
+	@ApiModelProperty(example = "SMARTPHONE", allowEmptyValue = false, required = true, notes = "Opções: SMARTPHONE,TABLET,NOTEBOOK,MODEM,ROUTER,DESKTOP,ACESSÓRIOS, OUTROS")
 	@Enumerated(EnumType.STRING)
 	private CategoriaEnum categoria;
 
+	@ApiModelProperty(example = "10", allowEmptyValue = false, required = true)
 	@NotNull
 	@Size(min = 0)
 	private String quantidade;
 
+	@JsonSerialize(using = CustomProdutoSerializer.class)
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
-	@JsonBackReference
 	private Fornecedor fornecedor;
 
 	public Produto() {
 	}
 
-	public Produto(Long id, @NotBlank @Size(min = 2) String nome, @NotBlank String codigoProduto,
-			@NotNull @Size(min = 0, max = 9999999) BigDecimal valor, @NotNull boolean promocao,
-			@NotNull @Size(min = 0, max = 9999999) BigDecimal valorPromo, String imagem, CategoriaEnum categoria,
-			@NotNull @Size(min = 0) String quantidade, Fornecedor fornecedor) {
+	public Produto(Long id, String nome, String codigoProduto, BigDecimal valor, boolean promocao,
+			BigDecimal valorPromo, String imagem, CategoriaEnum categoria, String quantidade, Fornecedor fornecedor) {
 		super(id);
 		this.nome = nome;
 		this.codigoProduto = codigoProduto;

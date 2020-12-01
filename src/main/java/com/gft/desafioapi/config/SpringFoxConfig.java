@@ -40,7 +40,8 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("com.gft.desafioapi")).paths(PathSelectors.any()).build()
 				.globalOperationParameters(commonParameters()).apiInfo(apiInfo())
-				.tags(new Tag("Fornecedores", "Gerencia os fornecedores"), new Tag("Clientes", "Gerencia os clientes"));
+				.tags(new Tag("Fornecedores", "Gerencia os fornecedores"), new Tag("Clientes", "Gerencia os clientes"),
+						new Tag("Produtos", "Gerencia os produtos"));
 		// .securitySchemes(Collections.singletonList(securitySchema()))
 		// .securityContexts(Collections.singletonList(securityContext())).pathMapping("/")
 		// .useDefaultResponseMessages(false)
