@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS fornecedor (
 	id bigint not null unique auto_increment primary key,
     nome varchar(100) not null,
-    cnpj varchar(15) not null unique
+    cnpj varchar(14) not null unique
 ) ENGINE = innoDB default charset = utf8mb4;
 
 INSERT INTO fornecedor (nome, cnpj) values

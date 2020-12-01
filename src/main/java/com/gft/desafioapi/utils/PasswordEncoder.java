@@ -7,7 +7,9 @@ public class PasswordEncoder {
 	public static void main(String[] args) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		System.out.println(encoder.encode("admin"));
+		for (int i = 0; i < 3; i++) {
+			System.out.println(encoder.encode("123456"));
+		}
 
 	}
 

@@ -23,12 +23,12 @@ public class Fornecedor extends AbstractEntity {
 	@Size(min = 2)
 	private String nome;
 
-	@ApiModelProperty(example = "29.762.000/0001-01", allowEmptyValue = false, required = true)
+	@ApiModelProperty(example = "07174743000127", allowEmptyValue = false, required = true, notes = "Sem pontos e não permite duplicades")
 	@NotBlank
-	@CNPJ
-	@Size(min = 13, max = 15)
+	@CNPJ()
 	private String cnpj;
 
+	@ApiModelProperty(hidden = true)
 	@OneToMany(mappedBy = "fornecedor")
 	@JsonManagedReference
 	private List<Produto> produtos;
@@ -36,8 +36,8 @@ public class Fornecedor extends AbstractEntity {
 	public Fornecedor() {
 	}
 
-	public Fornecedor(Long id, @NotBlank @Size(min = 2) String nome,
-			@NotBlank @CNPJ @Size(min = 13, max = 15) String cnpj, List<Produto> produtos) {
+	public Fornecedor(Long id, @NotBlank @Size(min = 2) String nome, @NotBlank @CNPJ String cnpj,
+			List<Produto> produtos) {
 		super(id);
 		this.nome = nome;
 		this.cnpj = cnpj;
