@@ -23,6 +23,10 @@ import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
 import com.gft.desafioapi.service.ClienteService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(tags = "Clientes")
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteResource {
@@ -33,44 +37,52 @@ public class ClienteResource {
 	@Autowired
 	ClienteService clienteService;
 
+	@ApiOperation("Lista todos os clientes")
 	@GetMapping
-	public Page<Cliente> listAll(Pageable pageable) {
+	public Page<Cliente> listarClientes(Pageable pageable) {
 		return clienteRepository.findAll(pageable);
 	}
 
+	@ApiOperation("Retorna um cliente por ID")
 	@GetMapping("/{id}")
-	public Cliente findById(@PathVariable Long id) {
+	public Cliente encontrarClientePorId(@PathVariable Long id) {
 		return clienteService.findClienteById(id);
 	}
 
+	@ApiOperation("Cadastra um novo cliente")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Cliente create(@RequestBody @Valid Cliente cliente) {
+	public Cliente criarCliente(@RequestBody @Valid Cliente cliente) {
 		return clienteService.create(cliente);
 	}
 
+	@ApiOperation("Atualiza os dados de um cliente por ID")
 	@PutMapping("/{id}")
-	public Cliente update(@PathVariable Long id, @RequestBody Cliente cliente) {
+	public Cliente atualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
 		return clienteService.update(id, cliente);
 	}
 
+	@ApiOperation("Exclui um cliente por ID")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Map<String, Boolean>> delete(@PathVariable Long id) {
+	public ResponseEntity<Map<String, Boolean>> excluirCliente(@PathVariable Long id) {
 		return clienteService.delete(id);
 	}
 
+	@ApiOperation("Lista os clientes em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<Cliente> listAllAsc(Pageable pageable) {
+	public Page<Cliente> listarClientesAsc(Pageable pageable) {
 		return clienteRepository.findAllOrderByNomeAsc(pageable);
 	}
 
+	@ApiOperation("Lista os clientes em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<Cliente> listAllDesc(Pageable pageable) {
+	public Page<Cliente> listarClientesDesc(Pageable pageable) {
 		return clienteRepository.findAllOrderByNomeDesc(pageable);
 	}
 
+	@ApiOperation("Busca clientes por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<Cliente> listByNome(@PathVariable String nome, Pageable pageable) {
+	public Page<Cliente> encontrarClientesPorNome(@PathVariable String nome, Pageable pageable) {
 		return clienteRepository.findByNomeContaining(nome, pageable);
 	}
 

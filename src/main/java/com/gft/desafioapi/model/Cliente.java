@@ -9,25 +9,32 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 public class Cliente extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@ApiModelProperty(example = "Marco Santos", allowEmptyValue = false, required = true)
 	@NotBlank
 	@Size(min = 2, max = 100)
 	private String nome;
 
+	@ApiModelProperty(example = "email@gft.com", allowEmptyValue = false, required = true, notes = "Não permite duplicidades")
 	@NotBlank
 	@Email
 	private String email;
 
+	@ApiModelProperty(example = "S3nh@123", allowEmptyValue = false, required = true)
 	@NotBlank
 	private String senha;
 
+	@ApiModelProperty(example = "123456789", allowEmptyValue = false, required = true, notes = "Não permite duplicidades")
 	@NotBlank
 	private String documento;
 
+	@ApiModelProperty(example = "2020-11-30", allowEmptyValue = true, required = false, hidden = true)
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dataCadastro;
 

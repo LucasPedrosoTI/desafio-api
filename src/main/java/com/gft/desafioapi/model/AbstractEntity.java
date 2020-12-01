@@ -8,11 +8,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @MappedSuperclass
 public class AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@ApiModelProperty(example = "1", hidden = true)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
