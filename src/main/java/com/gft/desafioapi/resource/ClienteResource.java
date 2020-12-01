@@ -59,4 +59,19 @@ public class ClienteResource {
 		return clienteService.delete(id);
 	}
 
+	@GetMapping("/asc")
+	public Page<Cliente> listAllAsc(Pageable pageable) {
+		return clienteRepository.findAllOrderByNomeAsc(pageable);
+	}
+
+	@GetMapping("/desc")
+	public Page<Cliente> listAllDesc(Pageable pageable) {
+		return clienteRepository.findAllOrderByNomeDesc(pageable);
+	}
+
+	@GetMapping("/nome/{nome}")
+	public Page<Cliente> listByNome(@PathVariable String nome, Pageable pageable) {
+		return clienteRepository.findByNomeContaining(nome, pageable);
+	}
+
 }
