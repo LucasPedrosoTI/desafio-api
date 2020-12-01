@@ -5,18 +5,24 @@ import static com.gft.desafioapi.utils.Coalesce.coalesce;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
 
 @Service
-public class ClienteService {
+public class ClienteService implements UserDetailsService {
 
 	@Autowired
 	ClienteRepository clienteRepository;
@@ -55,5 +61,14 @@ public class ClienteService {
 		clienteRepository.deleteById(id);
 
 		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Cliente usuario = Optional.ofNullable(clienteRepository.findByEmail(email))
+				.orElseThrow(() -> new UsernameNotFoundException("Cliente não encontrado"));
+
+		return new User(usuario.getEmail(), usuario.getSenha(),
+				AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
 	}
 }

@@ -15,4 +15,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
 	@Query("select c from Cliente c order by c.nome desc")
 	public Page<Cliente> findAllOrderByNomeDesc(Pageable pageable);
+
+	public Cliente findByEmail(String email);
 }
