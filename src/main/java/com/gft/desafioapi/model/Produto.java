@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Produto extends AbstractEntity {
 
@@ -46,6 +48,7 @@ public class Produto extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
+	@JsonBackReference
 	private Fornecedor fornecedor;
 
 	public Produto() {
