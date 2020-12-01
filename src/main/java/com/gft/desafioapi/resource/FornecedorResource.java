@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -40,15 +41,21 @@ public class FornecedorResource {
 
 	@ApiOperation("Retorna um fornecedor por ID")
 	@GetMapping("/{id}")
-	public Fornecedor encontrarClientePorId(@PathVariable Long id) {
-		return fornecedorService.findClienteById(id);
+	public Fornecedor encontrarFornecedorPorId(@PathVariable Long id) {
+		return fornecedorService.findFornecedorById(id);
 	}
 
 	@ApiOperation("Cadastra um novo fornecedor")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Fornecedor criarCliente(@RequestBody @Valid Fornecedor fornecedor) {
+	public Fornecedor criarFornecedor(@RequestBody @Valid Fornecedor fornecedor) {
 		return fornecedorRepository.save(fornecedor);
+	}
+
+	@ApiOperation("Atualiza os dados de um fornecedor por ID")
+	@PutMapping("/{id}")
+	public Fornecedor atualizarFornecedor(@PathVariable Long id, @RequestBody Fornecedor fornecedor) {
+		return fornecedorService.update(id, fornecedor);
 	}
 
 }
