@@ -3,10 +3,13 @@ package com.gft.desafioapi.service;
 import static com.gft.desafioapi.utils.Coalesce.coalesce;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Cliente;
@@ -46,5 +49,11 @@ public class ClienteService {
 		Cliente clienteAtualizado = new Cliente(id, nome, email, senha, documento, dataCadastro);
 
 		return clienteRepository.save(clienteAtualizado);
+	}
+
+	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
+		clienteRepository.deleteById(id);
+
+		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
 	}
 }
