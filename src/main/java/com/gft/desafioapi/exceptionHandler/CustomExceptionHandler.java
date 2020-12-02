@@ -16,6 +16,7 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,6 +36,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Autowired
 	MessageSource messageSource;
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
+				LocaleContextHolder.getLocale());
+		String mensagemDev = ExceptionUtils.getRootCauseMessage(ex);
+
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDev));
+
+		return this.handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
+
+	}
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,

@@ -15,7 +15,7 @@ public class AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(example = "1", hidden = true)
+	@ApiModelProperty(example = "1", position = -1)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
