@@ -50,7 +50,6 @@ public class Produto extends AbstractEntity {
 	private boolean promocao;
 
 	@ApiModelProperty(example = "1000", allowEmptyValue = false, required = true)
-	@NotNull
 	@DecimalMin(value = "0")
 	@DecimalMax(value = "9999999")
 	private BigDecimal valorPromo;
@@ -122,6 +121,10 @@ public class Produto extends AbstractEntity {
 	public boolean isPromocao() {
 		return promocao;
 	}
+
+//	public boolean isNotPromocao() {
+//		return !promocao;
+//	}
 
 	public void setPromocao(boolean promocao) {
 		this.promocao = promocao;

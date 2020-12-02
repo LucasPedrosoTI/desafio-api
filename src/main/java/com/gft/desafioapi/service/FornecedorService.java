@@ -1,10 +1,12 @@
 package com.gft.desafioapi.service;
 
-import static com.gft.desafioapi.utils.Coalesce.coalesce;
+import static com.gft.desafioapi.utils.EntityUtils.coalesce;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,6 +20,7 @@ import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.FornecedorRepository;
 import com.gft.desafioapi.repository.filter.FornecedorFilter;
+import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
 public class FornecedorService {
@@ -59,6 +62,12 @@ public class FornecedorService {
 
 		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
 
+	}
+
+	public Fornecedor salvar(@Valid Fornecedor fornecedor) {
+		EntityUtils.setIdNull(fornecedor);
+
+		return fornecedorRepository.save(fornecedor);
 	}
 
 }

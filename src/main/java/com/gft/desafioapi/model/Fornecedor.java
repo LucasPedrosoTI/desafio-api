@@ -9,31 +9,27 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import io.swagger.annotations.ApiModelProperty;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Fornecedor extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(example = "Xiaomi", allowEmptyValue = false, required = true)
+	@ApiModelProperty(example = "Apple", allowEmptyValue = false, required = true)
 	@NotBlank
 	@Size(min = 2)
 	private String nome;
 
-	@ApiModelProperty(example = "07174743000127", allowEmptyValue = false, required = true, notes = "Sem pontos e não permite duplicades")
+	@ApiModelProperty(example = "89000895000178", allowEmptyValue = false, required = true, notes = "Sem pontos e não permite duplicades")
 	@NotBlank
 	@CNPJ()
 	private String cnpj;
 
 	@ApiModelProperty(hidden = true)
 	@OneToMany(mappedBy = "fornecedor")
-	@JsonManagedReference
+//	@JsonManagedReference
 	private List<Produto> produtos;
 
 	public Fornecedor() {

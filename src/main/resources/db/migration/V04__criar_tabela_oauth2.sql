@@ -11,7 +11,7 @@ CREATE TABLE oauth_client_details (
   refresh_token_validity INTEGER NOT NULL,
   additional_information VARCHAR (255),
   autoapprove BOOLEAN
-) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 insert into `oauth_client_details`(
     `client_id`,
     `resource_ids`,

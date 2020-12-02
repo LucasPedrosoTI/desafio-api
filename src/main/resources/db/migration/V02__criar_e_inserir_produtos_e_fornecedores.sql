@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS fornecedor (
 ) ENGINE = innoDB default charset = utf8mb4;
 
 INSERT INTO fornecedor (nome, cnpj) values
-('Apple', '12345678912345'),
-('Samsung', '12345678912346');
+('Apple', '89000895000178'),
+('Samsung', '28023099000166');
 
 CREATE TABLE IF NOT EXISTS produto (
 	id bigint not null unique auto_increment primary key,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS produto (
 ) ENGINE = innoDB default charset = utf8mb4;
 
 insert into produto (nome, codigo_produto, valor, promocao, valor_promo, categoria, imagem, quantidade, fornecedor_id) values
-('iPhone 11', 'APL01', 5000.00, false, 4500.00, 'SMARTPHONE', 'iphone11.png', 100, 1),
+('iPhone 11', 'APL01', 5000.00, false, null, 'SMARTPHONE', 'iphone11.png', 100, 1),
 ('iPad Pro', 'APL02', 7000.00, true, 6500.00, 'TABLET', 'ipad-pro.png', 50, 1),
-('Galaxy S20', 'SAM01', 3000.00, false, 2800.00, 'SMARTPHONE', 'galaxy-s20.png', 5, 2),
+('Galaxy S20', 'SAM01', 3000.00, false, null, 'SMARTPHONE', 'galaxy-s20.png', 5, 2),
 ('Galaxy Tab S7', 'SAM02', 4800.50, true, 4200.00, 'TABLET', 'galaxy-tab-s7.png', 2, 2);

@@ -1,6 +1,6 @@
 package com.gft.desafioapi.service;
 
-import static com.gft.desafioapi.utils.Coalesce.coalesce;
+import static com.gft.desafioapi.utils.EntityUtils.coalesce;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
+import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
 public class ClienteService implements UserDetailsService {
@@ -28,6 +29,8 @@ public class ClienteService implements UserDetailsService {
 	ClienteRepository clienteRepository;
 
 	public Cliente create(Cliente cliente) {
+
+		EntityUtils.setIdNull(cliente);
 
 		if (Objects.isNull(cliente.getDataCadastro())) {
 			cliente.setDataCadastro(LocalDate.now());
