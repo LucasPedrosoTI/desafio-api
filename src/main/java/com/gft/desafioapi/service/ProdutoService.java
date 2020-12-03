@@ -1,10 +1,13 @@
 package com.gft.desafioapi.service;
 
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Produto;
@@ -63,5 +66,11 @@ public class ProdutoService {
 		if (Objects.isNull(produto.getFornecedor())) {
 			throw new EmptyResultDataAccessException("Fornecedor não informado", 1);
 		}
+	}
+
+	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
+		produtoRepository.deleteById(id);
+
+		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
 	}
 }

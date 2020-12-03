@@ -65,7 +65,7 @@ public class FornecedorResource {
 
 	@ApiOperation("Exclui um fornecedor por ID")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Map<String, Boolean>> excluirForneecedor(@PathVariable Long id) {
+	public ResponseEntity<Map<String, Boolean>> excluirFornecedor(@PathVariable Long id) {
 		return fornecedorService.delete(id);
 	}
 

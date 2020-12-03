@@ -12,6 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -73,7 +74,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ DataIntegrityViolationException.class, ConstraintViolationException.class,
-			MethodArgumentTypeMismatchException.class, PropertyReferenceException.class })
+			MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
+			InvalidDataAccessApiUsageException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
 		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
 				LocaleContextHolder.getLocale());
