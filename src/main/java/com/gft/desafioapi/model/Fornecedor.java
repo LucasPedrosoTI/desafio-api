@@ -9,11 +9,13 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
 
+import com.gft.desafioapi.utils.Coalesce;
+
 import io.swagger.annotations.ApiModelProperty;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
-public class Fornecedor extends AbstractEntity {
+public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -70,6 +72,16 @@ public class Fornecedor extends AbstractEntity {
 	@Override
 	public String toString() {
 		return "Fornecedor [nome=" + nome + ", cnpj=" + cnpj + ", Id=" + getId() + "]";
+	}
+
+	@Override
+	public Fornecedor coalesce(Fornecedor other, Long id) {
+
+		String nome = coalesce(this.getNome(), other.getNome());
+		String cnpj = coalesce(this.getCnpj(), other.getCnpj());
+		List<Produto> produtos = coalesce(this.getProdutos(), other.getProdutos());
+
+		return new Fornecedor(id, nome, cnpj, produtos);
 	}
 
 }

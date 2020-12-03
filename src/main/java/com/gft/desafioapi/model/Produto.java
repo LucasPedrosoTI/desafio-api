@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.utils.Coalesce;
 import com.gft.desafioapi.utils.CustomProdutoDeserializer;
 import com.gft.desafioapi.utils.CustomProdutoSerializer;
 
@@ -26,7 +27,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
-public class Produto extends AbstractEntity {
+public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,9 +48,9 @@ public class Produto extends AbstractEntity {
 
 	@ApiModelProperty(example = "true", allowEmptyValue = false, required = true)
 	@NotNull
-	private boolean promocao;
+	private Boolean promocao;
 
-	@ApiModelProperty(example = "1000", allowEmptyValue = false, required = true)
+	@ApiModelProperty(example = "1000", allowEmptyValue = true, required = false, value = "Caso promocao seja false, valor deve ser nulo")
 	@DecimalMin(value = "0")
 	@DecimalMax(value = "9999999")
 	private BigDecimal valorPromo;
@@ -78,12 +79,8 @@ public class Produto extends AbstractEntity {
 	public Produto() {
 	}
 
-	public String getNome() {
-		return nome;
-	}
-
 	public Produto(Long id, @NotBlank @Size(min = 2) String nome, @NotBlank String codigoProduto,
-			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valor, @NotNull boolean promocao,
+			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valor, @NotNull Boolean promocao,
 			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valorPromo, String imagem,
 			CategoriaEnum categoria, @NotNull @Size(min = 0) Long quantidade, Fornecedor fornecedor) {
 		super(id);
@@ -96,6 +93,10 @@ public class Produto extends AbstractEntity {
 		this.categoria = categoria;
 		this.quantidade = quantidade;
 		this.fornecedor = fornecedor;
+	}
+
+	public String getNome() {
+		return nome;
 	}
 
 	public void setNome(String nome) {
@@ -118,16 +119,20 @@ public class Produto extends AbstractEntity {
 		this.valor = valor;
 	}
 
-	public boolean isPromocao() {
-		return promocao;
+	public Boolean isPromocao() {
+		if (promocao instanceof Boolean) {
+			return promocao;
+		} else {
+			return null;
+		}
 	}
 
-//	public boolean isNotPromocao() {
-//		return !promocao;
-//	}
-
-	public void setPromocao(boolean promocao) {
-		this.promocao = promocao;
+	public void setPromocao(Boolean promocao) {
+		if (promocao instanceof Boolean) {
+			this.promocao = promocao;
+		} else {
+			return;
+		}
 	}
 
 	public BigDecimal getValorPromo() {
@@ -175,6 +180,28 @@ public class Produto extends AbstractEntity {
 		return "Produto [nome=" + nome + ", codigoProduto=" + codigoProduto + ", valor=" + valor + ", promocao="
 				+ promocao + ", valorPromo=" + valorPromo + ", imagem=" + imagem + ", categoria=" + categoria
 				+ ", quantidade=" + quantidade + ", fornecedor=" + fornecedor + "]";
+	}
+
+	@Override
+	public Produto coalesce(Produto other, Long id) {
+		BigDecimal valorPromo = null;
+
+		String nome = coalesce(this.getNome(), other.getNome());
+		String codigoProduto = coalesce(this.getCodigoProduto(), other.getCodigoProduto());
+		BigDecimal valor = coalesce(this.getValor(), other.getValor());
+		Boolean promocao = coalesce(this.isPromocao(), other.isPromocao());
+
+		if (promocao) {
+			valorPromo = coalesce(this.getValorPromo(), other.getValorPromo());
+		}
+
+		String imagem = coalesce(this.getImagem(), other.getImagem());
+		CategoriaEnum categoria = coalesce(this.getCategoria(), other.getCategoria());
+		Long quantidade = coalesce(this.getQuantidade(), other.getQuantidade());
+		Fornecedor fornecedor = coalesce(this.getFornecedor(), other.getFornecedor());
+
+		return new Produto(id, nome, codigoProduto, valor, promocao, valorPromo, imagem, categoria, quantidade,
+				fornecedor);
 	}
 
 }

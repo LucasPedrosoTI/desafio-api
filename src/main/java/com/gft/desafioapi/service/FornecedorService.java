@@ -2,7 +2,6 @@ package com.gft.desafioapi.service;
 
 import static com.gft.desafioapi.utils.EntityUtils.coalesce;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Fornecedor;
-import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.FornecedorRepository;
 import com.gft.desafioapi.repository.filter.FornecedorFilter;
 import com.gft.desafioapi.utils.EntityUtils;
@@ -47,13 +45,10 @@ public class FornecedorService {
 	}
 
 	public Fornecedor update(Long id, Fornecedor fornecedor) {
-		Fornecedor fornecedorExistente = findFornecedorById(id);
 
-		String nome = coalesce(fornecedor.getNome(), fornecedorExistente.getNome());
-		String cnpj = coalesce(fornecedor.getCnpj(), fornecedorExistente.getCnpj());
-		List<Produto> produtos = fornecedorExistente.getProdutos();
+		Fornecedor fornecedorAtualizado = fornecedor.coalesce(findFornecedorById(id), id);
 
-		return fornecedorRepository.save(new Fornecedor(id, nome, cnpj, produtos));
+		return fornecedorRepository.save(fornecedorAtualizado);
 
 	}
 

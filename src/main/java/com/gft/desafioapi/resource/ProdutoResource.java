@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,7 +42,7 @@ public class ProdutoResource {
 	@ApiOperation("Retorna um produto por ID")
 	@GetMapping("/{id}")
 	public Produto encontrarProdutoPorId(@PathVariable Long id) {
-		return produtoService.findClienteById(id);
+		return produtoService.findProdutoById(id);
 	}
 
 	@ApiOperation("Cadastra um novo produto")
@@ -50,6 +51,12 @@ public class ProdutoResource {
 	public Produto criarProduto(@RequestBody @Valid Produto produto) {
 
 		return produtoService.criar(produto);
+	}
+
+	@ApiOperation("Atualiza os dados de um pruduto por ID")
+	@PutMapping("/{id}")
+	public Produto atualizarProduto(@PathVariable Long id, @RequestBody Produto produto) {
+		return produtoService.update(id, produto);
 	}
 
 }

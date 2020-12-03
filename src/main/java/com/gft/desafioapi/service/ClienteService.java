@@ -1,7 +1,5 @@
 package com.gft.desafioapi.service;
 
-import static com.gft.desafioapi.utils.EntityUtils.coalesce;
-
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Cliente;
@@ -27,6 +26,9 @@ public class ClienteService implements UserDetailsService {
 
 	@Autowired
 	ClienteRepository clienteRepository;
+
+	@Autowired
+	BCryptPasswordEncoder encoder;
 
 	public Cliente create(Cliente cliente) {
 
@@ -47,15 +49,11 @@ public class ClienteService implements UserDetailsService {
 	}
 
 	public Cliente update(Long id, Cliente cliente) {
-		Cliente clienteExistente = findClienteById(id);
+		Cliente clienteAtualizado = cliente.coalesce(findClienteById(id), id);
 
-		String nome = coalesce(cliente.getNome(), clienteExistente.getNome());
-		String email = coalesce(cliente.getEmail(), clienteExistente.getEmail());
-		String senha = coalesce(cliente.getSenha(), clienteExistente.getSenha());
-		String documento = coalesce(cliente.getDocumento(), clienteExistente.getDocumento());
-		LocalDate dataCadastro = coalesce(cliente.getDataCadastro(), clienteExistente.getDataCadastro());
-
-		Cliente clienteAtualizado = new Cliente(id, nome, email, senha, documento, dataCadastro);
+		if (Objects.nonNull(cliente.getSenha())) {
+			clienteAtualizado.setSenha(encoder.encode(cliente.getSenha()));
+		}
 
 		return clienteRepository.save(clienteAtualizado);
 	}

@@ -8,11 +8,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gft.desafioapi.utils.Coalesce;
 
 import io.swagger.annotations.ApiModelProperty;
 
 @Entity
-public class Cliente extends AbstractEntity {
+public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -89,6 +90,18 @@ public class Cliente extends AbstractEntity {
 
 	public void setDataCadastro(LocalDate dataCadastro) {
 		this.dataCadastro = dataCadastro;
+	}
+
+	@Override
+	public Cliente coalesce(Cliente other, Long id) {
+
+		String nome = coalesce(this.getNome(), other.getNome());
+		String email = coalesce(this.getEmail(), other.getEmail());
+		String senha = coalesce(this.getSenha(), other.getSenha());
+		String documento = coalesce(this.getDocumento(), other.getDocumento());
+		LocalDate dataCadastro = coalesce(this.getDataCadastro(), other.getDataCadastro());
+
+		return new Cliente(id, nome, email, senha, documento, dataCadastro);
 	}
 
 }

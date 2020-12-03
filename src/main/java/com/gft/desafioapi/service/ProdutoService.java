@@ -20,7 +20,7 @@ public class ProdutoService {
 	@Autowired
 	FornecedorService fornecedorService;
 
-	public Produto findClienteById(Long id) {
+	public Produto findProdutoById(Long id) {
 		return produtoRepository.findById(id).orElseThrow(() -> {
 			throw new EmptyResultDataAccessException(1);
 		});
@@ -39,6 +39,15 @@ public class ProdutoService {
 		return produtoRepository.save(produto);
 	}
 
+	public Produto update(Long id, Produto produto) {
+
+		Produto produtoAtualizado = produto.coalesce(findProdutoById(id), id);
+
+		validatePromocao(produtoAtualizado);
+
+		return produtoRepository.save(produtoAtualizado);
+	}
+
 	private void validatePromocao(Produto produto) {
 		if (!produto.isPromocao() && Objects.nonNull(produto.getValorPromo())) {
 			throw new DataIntegrityViolationException(
@@ -55,5 +64,4 @@ public class ProdutoService {
 			throw new EmptyResultDataAccessException("Fornecedor não informado", 1);
 		}
 	}
-
 }
