@@ -53,7 +53,7 @@ public class ClienteResource {
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
 	public Cliente criarCliente(@RequestBody @Valid Cliente cliente) {
-		return clienteService.create(cliente);
+		return clienteService.criar(cliente);
 	}
 
 	@ApiOperation("Atualiza os dados de um cliente por ID")

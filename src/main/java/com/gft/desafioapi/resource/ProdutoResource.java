@@ -54,7 +54,7 @@ public class ProdutoResource {
 	@PostMapping
 	public Produto criarProduto(@RequestBody @Valid Produto produto) {
 
-		return produtoService.criar(produto);
+		return produtoService.create(produto);
 	}
 
 	@ApiOperation("Atualiza os dados de um pruduto por ID")

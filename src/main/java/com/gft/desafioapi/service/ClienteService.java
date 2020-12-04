@@ -30,7 +30,7 @@ public class ClienteService implements UserDetailsService {
 	@Autowired
 	BCryptPasswordEncoder encoder;
 
-	public Cliente create(Cliente cliente) {
+	public Cliente criar(Cliente cliente) {
 
 		EntityUtils.setIdNull(cliente);
 

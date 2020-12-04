@@ -1,4 +1,4 @@
-package com.gft.desafioapi.utils;
+package com.gft.desafioapi.repository.serializer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -8,15 +8,15 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.gft.desafioapi.model.Fornecedor;
 
-public class CustomProdutoSerializer extends StdSerializer<Fornecedor> {
+public class CustomProdutoFornecedorSerializer extends StdSerializer<Fornecedor> {
 
 	private static final long serialVersionUID = 1057276000702591921L;
 
-	public CustomProdutoSerializer() {
+	public CustomProdutoFornecedorSerializer() {
 		this(null);
 	}
 
-	public CustomProdutoSerializer(Class<Fornecedor> t) {
+	public CustomProdutoFornecedorSerializer(Class<Fornecedor> t) {
 		super(t);
 	}
 

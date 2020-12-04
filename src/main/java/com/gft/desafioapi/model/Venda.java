@@ -9,28 +9,42 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.repository.serializer.CustomVendaClienteSerializer;
+import com.gft.desafioapi.repository.serializer.CustomVendaProdutoDeserializer;
+import com.gft.desafioapi.repository.serializer.CustomVendaProdutoSerializer;
+
+import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 public class Venda extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@NotNull
-	@Size(min = 0)
+	@ApiModelProperty(hidden = true)
+	@DecimalMin(value = "0")
 	private BigDecimal totalCompra;
 
 	@NotNull
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCompra;
 
+	@ApiModelProperty(allowEmptyValue = false, required = true, value = "ID do cliente")
+	@JsonSerialize(using = CustomVendaClienteSerializer.class)
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
 
+	@ApiModelProperty(allowEmptyValue = false, required = true, value = "ID dos produtos")
+	@JsonSerialize(using = CustomVendaProdutoSerializer.class)
+	@JsonDeserialize(using = CustomVendaProdutoDeserializer.class)
 	@ManyToMany
 	@JoinTable(name = "venda_produto", joinColumns = @JoinColumn(name = "venda_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
 	private List<Produto> produtos;
@@ -77,6 +91,12 @@ public class Venda extends AbstractEntity {
 
 	public void setProdutos(List<Produto> produtos) {
 		this.produtos = produtos;
+	}
+
+	@Override
+	public String toString() {
+		return "Venda [totalCompra=" + totalCompra + ", dataCompra=" + dataCompra + ", cliente=" + cliente
+				+ ", produtos=" + produtos + ", getId()=" + getId() + "]";
 	}
 
 }

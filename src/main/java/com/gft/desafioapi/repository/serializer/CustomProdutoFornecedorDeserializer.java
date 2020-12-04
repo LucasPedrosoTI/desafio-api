@@ -1,4 +1,4 @@
-package com.gft.desafioapi.utils;
+package com.gft.desafioapi.repository.serializer;
 
 import java.io.IOException;
 
@@ -16,18 +16,18 @@ import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
 
 @Component
-public class CustomProdutoDeserializer extends StdDeserializer<Fornecedor> {
+public class CustomProdutoFornecedorDeserializer extends StdDeserializer<Fornecedor> {
 
 	@Autowired
 	FornecedorRepository fornecedorRepository;
 
 	private static final long serialVersionUID = -839983745171929649L;
 
-	public CustomProdutoDeserializer() {
+	public CustomProdutoFornecedorDeserializer() {
 		this(null);
 	}
 
-	public CustomProdutoDeserializer(Class<?> vc) {
+	public CustomProdutoFornecedorDeserializer(Class<?> vc) {
 		super(vc);
 	}
 

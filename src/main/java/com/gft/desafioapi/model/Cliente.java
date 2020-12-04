@@ -93,6 +93,12 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	}
 
 	@Override
+	public String toString() {
+		return "Cliente [nome=" + nome + ", email=" + email + ", senha=" + senha + ", documento=" + documento
+				+ ", dataCadastro=" + dataCadastro + ", getId()=" + getId() + "]";
+	}
+
+	@Override
 	public Cliente coalesce(Cliente other, Long id) {
 
 		String nome = coalesce(this.getNome(), other.getNome());

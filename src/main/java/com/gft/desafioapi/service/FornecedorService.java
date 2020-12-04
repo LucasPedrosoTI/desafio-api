@@ -59,7 +59,7 @@ public class FornecedorService {
 
 	}
 
-	public Fornecedor salvar(@Valid Fornecedor fornecedor) {
+	public Fornecedor create(@Valid Fornecedor fornecedor) {
 		EntityUtils.setIdNull(fornecedor);
 
 		return fornecedorRepository.save(fornecedor);

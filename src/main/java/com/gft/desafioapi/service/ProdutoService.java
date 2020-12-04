@@ -29,7 +29,7 @@ public class ProdutoService {
 		});
 	}
 
-	public Produto criar(Produto produto) {
+	public Produto create(Produto produto) {
 
 		EntityUtils.setIdNull(produto);
 
@@ -51,6 +51,12 @@ public class ProdutoService {
 		return produtoRepository.save(produtoAtualizado);
 	}
 
+	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
+		produtoRepository.deleteById(id);
+
+		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+	}
+
 	private void validatePromocao(Produto produto) {
 		if (!produto.isPromocao() && Objects.nonNull(produto.getValorPromo())) {
 			throw new DataIntegrityViolationException(
@@ -68,9 +74,4 @@ public class ProdutoService {
 		}
 	}
 
-	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
-		produtoRepository.deleteById(id);
-
-		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
-	}
 }

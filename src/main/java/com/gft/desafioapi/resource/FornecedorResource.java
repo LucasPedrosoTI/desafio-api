@@ -54,7 +54,7 @@ public class FornecedorResource {
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
 	public Fornecedor criarFornecedor(@RequestBody @Valid Fornecedor fornecedor) {
-		return fornecedorService.salvar(fornecedor);
+		return fornecedorService.create(fornecedor);
 	}
 
 	@ApiOperation("Atualiza os dados de um fornecedor por ID")

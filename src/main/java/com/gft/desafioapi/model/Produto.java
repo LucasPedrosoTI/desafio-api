@@ -19,9 +19,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorDeserializer;
+import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
 import com.gft.desafioapi.utils.Coalesce;
-import com.gft.desafioapi.utils.CustomProdutoDeserializer;
-import com.gft.desafioapi.utils.CustomProdutoSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -70,8 +70,8 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 //	@JsonBackReference
 	@ApiModelProperty(position = 9, required = true, value = "ID do fornecedor")
-	@JsonSerialize(using = CustomProdutoSerializer.class)
-	@JsonDeserialize(using = CustomProdutoDeserializer.class)
+	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
+	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
