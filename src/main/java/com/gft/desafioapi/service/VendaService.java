@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
 import com.gft.desafioapi.utils.EntityUtils;
@@ -37,18 +36,12 @@ public class VendaService {
 		if (Objects.isNull(venda.getProdutos())) {
 			throw new EmptyResultDataAccessException("É obrigatório fornecer uma lista de produtos", 1);
 		}
-
-		Double totalCompra = 0d;
-
-		for (Produto produto : venda.getProdutos()) {
-			if (produto.isPromocao()) {
-				totalCompra += produto.getValorPromo().doubleValue();
-			} else {
-				totalCompra += produto.getValor().doubleValue();
-			}
-		}
-
-		return new BigDecimal(totalCompra);
+		// @formatter:off
+		return venda.getProdutos()
+				.stream()
+				.map(p -> p.isPromocao() ? p.getValorPromo() : p.getValor())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		// @formatter:on
 	}
 
 }

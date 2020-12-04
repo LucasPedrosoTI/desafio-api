@@ -57,7 +57,7 @@ public class ProdutoResource {
 		return produtoService.create(produto);
 	}
 
-	@ApiOperation("Atualiza os dados de um pruduto por ID")
+	@ApiOperation("Atualiza os dados de um produto por ID")
 	@PutMapping("/{id}")
 	public Produto atualizarProduto(@PathVariable Long id, @RequestBody Produto produto) {
 		return produtoService.update(id, produto);
