@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 
@@ -30,6 +31,7 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 
 	@ApiModelProperty(hidden = true)
 	@DecimalMin(value = "0")
+	@DecimalMax(value = "9999999")
 	private BigDecimal totalCompra;
 
 	@NotNull

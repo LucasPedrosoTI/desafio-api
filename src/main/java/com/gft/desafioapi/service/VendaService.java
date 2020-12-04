@@ -1,18 +1,23 @@
 package com.gft.desafioapi.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
+import com.gft.desafioapi.repository.filter.VendaFilter;
 import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
@@ -20,6 +25,15 @@ public class VendaService {
 
 	@Autowired
 	VendaRepository vendaRepository;
+
+	public Page<Venda> findAllWithFilter(VendaFilter filter, Pageable pageable) {
+		LocalDate dataCompraDe = Optional.ofNullable(filter.getDataCompraDe()).orElse(LocalDate.of(1970, 1, 1));
+		LocalDate dataCompraAte = Optional.ofNullable(filter.getDataCompraAte()).orElse(LocalDate.of(3000, 12, 31));
+		BigDecimal totalCompraDe = Optional.ofNullable(filter.getTotalCompraDe()).orElse(BigDecimal.ZERO);
+		BigDecimal totalCompraAte = Optional.ofNullable(filter.getTotalCompraAte()).orElse(BigDecimal.valueOf(9999999));
+
+		return vendaRepository.pesquisarVendas(dataCompraDe, dataCompraAte, totalCompraDe, totalCompraAte, pageable);
+	}
 
 	public Venda findVendaById(Long id) {
 		return vendaRepository.findById(id).orElseThrow(() -> {
@@ -68,9 +82,7 @@ public class VendaService {
 			throw new EmptyResultDataAccessException("É obrigatório fornecer uma lista de produtos", 1);
 		}
 		// @formatter:off
-		return venda.getProdutos()
-				.stream()
-				.map(p -> p.isPromocao() ? p.getValorPromo() : p.getValor())
+		return venda.getProdutos().stream().map(p -> p.isPromocao() ? p.getValorPromo() : p.getValor())
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		// @formatter:on
 	}
@@ -80,7 +92,5 @@ public class VendaService {
 			throw new EmptyResultDataAccessException("Fornecedor não informado", 1);
 		}
 	}
-
-
 
 }

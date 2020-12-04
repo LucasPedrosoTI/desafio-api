@@ -35,8 +35,8 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	@NotBlank
 	private String documento;
 
-	@ApiModelProperty(example = "2020-11-30", allowEmptyValue = true, required = false, hidden = true)
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@ApiModelProperty(example = "30/11/2020", allowEmptyValue = true, required = false, hidden = true)
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCadastro;
 
 	public Cliente() {

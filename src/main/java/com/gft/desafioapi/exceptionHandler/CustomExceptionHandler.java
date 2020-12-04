@@ -22,6 +22,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,6 +38,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Autowired
 	MessageSource messageSource;
+
+	@Override
+	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		List<Erro> erros = this.criarListaDeErros(ex.getBindingResult());
+
+		return this.handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
+	}
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
@@ -74,8 +83,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ DataIntegrityViolationException.class, ConstraintViolationException.class,
-			MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
-			InvalidDataAccessApiUsageException.class })
+		MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
+		InvalidDataAccessApiUsageException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
 		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
 				LocaleContextHolder.getLocale());
@@ -87,7 +96,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ BadCredentialsException.class, InvalidGrantException.class, UsernameNotFoundException.class,
-			AuthenticationException.class })
+		AuthenticationException.class })
 	public ResponseEntity<Object> handleBadCredentialsException(Exception ex, WebRequest request) {
 
 		String mensagemUsuario = this.messageSource.getMessage("recurso.acesso-negado", null,

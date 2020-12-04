@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
+import com.gft.desafioapi.repository.filter.VendaFilter;
 import com.gft.desafioapi.service.VendaService;
 
 import io.swagger.annotations.Api;
@@ -39,8 +40,8 @@ public class VendaResource {
 
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
-	public Page<Venda> listarVendas(Pageable pageable) {
-		return vendaRepository.findAll(pageable);
+	public Page<Venda> listarVendas(VendaFilter filter, Pageable pageable) {
+		return vendaService.findAllWithFilter(filter, pageable);
 	}
 
 	@ApiOperation("Retorna uma venda por ID")
