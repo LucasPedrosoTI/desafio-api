@@ -7,7 +7,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
+import com.gft.desafioapi.repository.filter.ClienteFilter;
+import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
@@ -29,6 +32,16 @@ public class ClienteService implements UserDetailsService {
 
 	@Autowired
 	BCryptPasswordEncoder encoder;
+
+	public Page<Cliente> pesquisarClientes(ClienteFilter filter, Pageable pageable) {
+		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
+		final String email = Optional.ofNullable(filter.getEmail()).orElse("");
+		final String documento = Optional.ofNullable(filter.getDocumento()).orElse("");
+		final LocalDate dataCadastroDe = Optional.ofNullable(filter.getDataCadastroDe()).orElse(Constants.MIN_DATE);
+		final LocalDate dataCadastroAte = Optional.ofNullable(filter.getDataCadastroAte()).orElse(Constants.MAX_DATE);
+
+		return clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte, pageable);
+	}
 
 	public Cliente criar(Cliente cliente) {
 
@@ -61,15 +74,16 @@ public class ClienteService implements UserDetailsService {
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
 		clienteRepository.deleteById(id);
 
-		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+		return Constants.MAP_SUCCESS_TRUE;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Cliente usuario = Optional.ofNullable(clienteRepository.findByEmail(email))
-				.orElseThrow(() -> new UsernameNotFoundException("Cliente não encontrado"));
+				.orElseThrow(() -> new UsernameNotFoundException(Constants.CLIENTE_INEXISTENTE));
 
 		return new User(usuario.getEmail(), usuario.getSenha(),
 				AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
 	}
+
 }

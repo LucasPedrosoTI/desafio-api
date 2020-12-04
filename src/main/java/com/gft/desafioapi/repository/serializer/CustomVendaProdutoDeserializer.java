@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
+import com.gft.desafioapi.utils.Constants;
 
 @Component
 public class CustomVendaProdutoDeserializer extends StdDeserializer<List<Produto>> {
@@ -40,19 +41,19 @@ public class CustomVendaProdutoDeserializer extends StdDeserializer<List<Produto
 		JsonNode node = jsonparser.getCodec().readTree(jsonparser);
 
 		if (node.size() == 0) {
-			throw new EmptyResultDataAccessException("Produtos não passados na requisição", 1);
+			throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 		}
 
 		node.elements().forEachRemaining(element -> {
 
 			if (!element.has("id")) {
-				throw new EmptyResultDataAccessException("Deve ser passado o ID do produto", 1);
+				throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 			}
 
 			Long id = element.get("id").asLong();
 
 			Produto produto = produtoRepository.findById(id).orElseThrow(() -> {
-				throw new EmptyResultDataAccessException("Produto inexistente", 1);
+				throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 			});
 
 			produtos.add(produto);

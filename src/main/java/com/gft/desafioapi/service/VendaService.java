@@ -11,13 +11,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
 import com.gft.desafioapi.repository.filter.VendaFilter;
+import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
@@ -27,10 +27,10 @@ public class VendaService {
 	VendaRepository vendaRepository;
 
 	public Page<Venda> findAllWithFilter(VendaFilter filter, Pageable pageable) {
-		LocalDate dataCompraDe = Optional.ofNullable(filter.getDataCompraDe()).orElse(LocalDate.of(1970, 1, 1));
-		LocalDate dataCompraAte = Optional.ofNullable(filter.getDataCompraAte()).orElse(LocalDate.of(3000, 12, 31));
+		LocalDate dataCompraDe = Optional.ofNullable(filter.getDataCompraDe()).orElse(Constants.MIN_DATE);
+		LocalDate dataCompraAte = Optional.ofNullable(filter.getDataCompraAte()).orElse(Constants.MAX_DATE);
 		BigDecimal totalCompraDe = Optional.ofNullable(filter.getTotalCompraDe()).orElse(BigDecimal.ZERO);
-		BigDecimal totalCompraAte = Optional.ofNullable(filter.getTotalCompraAte()).orElse(BigDecimal.valueOf(9999999));
+		BigDecimal totalCompraAte = Optional.ofNullable(filter.getTotalCompraAte()).orElse(Constants.MAX_DECIMAL);
 
 		return vendaRepository.pesquisarVendas(dataCompraDe, dataCompraAte, totalCompraDe, totalCompraAte, pageable);
 	}
@@ -65,13 +65,13 @@ public class VendaService {
 
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
 		vendaRepository.deleteById(id);
-		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+		return Constants.MAP_SUCCESS_TRUE;
 	}
 
 	private void validarSeProdutosPertencemAoFornecedor(Venda venda) {
 		venda.getProdutos().forEach(produto -> {
 			if (!produto.getFornecedor().getId().equals(venda.getFornecedor().getId())) {
-				throw new DataIntegrityViolationException("Os produtos devem ser do mesmo fornecedor informado");
+				throw new DataIntegrityViolationException(Constants.FORNECEDOR_INVALIDO_MESSAGE);
 			}
 		});
 	}
@@ -79,7 +79,7 @@ public class VendaService {
 	private BigDecimal calcularTotalCompra(Venda venda) {
 
 		if (Objects.isNull(venda.getProdutos())) {
-			throw new EmptyResultDataAccessException("É obrigatório fornecer uma lista de produtos", 1);
+			throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 		}
 		// @formatter:off
 		return venda.getProdutos().stream().map(p -> p.isPromocao() ? p.getValorPromo() : p.getValor())
@@ -89,7 +89,7 @@ public class VendaService {
 
 	private void checkFornecedor(Venda venda) {
 		if (Objects.isNull(venda.getFornecedor())) {
-			throw new EmptyResultDataAccessException("Fornecedor não informado", 1);
+			throw new EmptyResultDataAccessException(Constants.FORNECEDOR_INEXISTENTE, 1);
 		}
 	}
 

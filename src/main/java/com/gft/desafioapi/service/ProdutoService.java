@@ -6,12 +6,12 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
+import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
@@ -54,23 +54,23 @@ public class ProdutoService {
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
 		produtoRepository.deleteById(id);
 
-		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+		return Constants.MAP_SUCCESS_TRUE;
 	}
 
 	private void validatePromocao(Produto produto) {
 		if (!produto.isPromocao() && Objects.nonNull(produto.getValorPromo())) {
 			throw new DataIntegrityViolationException(
-					"Se o produto não estiver em promoção, seu valorPromo deve ser igual null");
+					Constants.PRODUTO_VALOR_PROMO_MESSAGE);
 		}
 
 		if (produto.isPromocao() && Objects.isNull(produto.getValorPromo())) {
-			throw new DataIntegrityViolationException("Se o produto estiver em promoção, valorPromo é obrigatório");
+			throw new DataIntegrityViolationException(Constants.PRODUTO_VALOR_PROMO_MESSAGE);
 		}
 	}
 
 	private void checkFornecedor(Produto produto) {
 		if (Objects.isNull(produto.getFornecedor())) {
-			throw new EmptyResultDataAccessException("Fornecedor não informado", 1);
+			throw new EmptyResultDataAccessException(Constants.FORNECEDOR_INEXISTENTE, 1);
 		}
 	}
 

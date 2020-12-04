@@ -1,9 +1,7 @@
 package com.gft.desafioapi.service;
 
-import static com.gft.desafioapi.utils.EntityUtils.coalesce;
-
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -11,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
 import com.gft.desafioapi.repository.filter.FornecedorFilter;
+import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.EntityUtils;
 
 @Service
@@ -28,12 +26,8 @@ public class FornecedorService {
 
 	public Page<Fornecedor> findAllWithFilter(FornecedorFilter filter, Pageable pageable) {
 
-		String nome = "", cnpj = "";
-
-		if (Objects.nonNull(filter)) {
-			nome = coalesce(filter.getNome(), "");
-			cnpj = coalesce(filter.getCnpj(), "");
-		}
+		String nome = Optional.ofNullable(filter.getNome()).orElse("");
+		String cnpj = Optional.ofNullable(filter.getCnpj()).orElse("");
 
 		return fornecedorRepository.findByNomeContainingAndCnpjContaining(nome, cnpj, pageable);
 	}
@@ -55,7 +49,7 @@ public class FornecedorService {
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
 		fornecedorRepository.deleteById(id);
 
-		return new ResponseEntity<Map<String, Boolean>>(Map.of("success", true), HttpStatus.OK);
+		return Constants.MAP_SUCCESS_TRUE;
 
 	}
 

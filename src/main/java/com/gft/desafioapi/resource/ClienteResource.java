@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
+import com.gft.desafioapi.repository.filter.ClienteFilter;
 import com.gft.desafioapi.service.ClienteService;
 
 import io.swagger.annotations.Api;
@@ -39,8 +40,8 @@ public class ClienteResource {
 
 	@ApiOperation("Lista todos os clientes")
 	@GetMapping
-	public Page<Cliente> listarClientes(Pageable pageable) {
-		return clienteRepository.findAll(pageable);
+	public Page<Cliente> listarClientes(ClienteFilter filter, Pageable pageable) {
+		return clienteService.pesquisarClientes(filter, pageable);
 	}
 
 	@ApiOperation("Retorna um cliente por ID")
