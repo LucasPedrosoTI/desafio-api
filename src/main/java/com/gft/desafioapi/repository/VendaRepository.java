@@ -12,7 +12,7 @@ import com.gft.desafioapi.model.Venda;
 
 public interface VendaRepository extends JpaRepository<Venda, Long> {
 
-	@Query("select v from Venda v where v.dataCompra >= ?1 and v.dataCompra <= ?2 and v.totalCompra >= ?3 and v.totalCompra <= ?4")
+	@Query("select v from Venda v where (v.dataCompra BETWEEN ?1 and ?2) and (v.totalCompra BETWEEN ?3 and ?4)")
 	public Page<Venda> pesquisarVendas(LocalDate dataCompraDe, LocalDate dataCompraAte, BigDecimal totalCompraDe,
 			BigDecimal totalCompraAte, Pageable pageable);
 

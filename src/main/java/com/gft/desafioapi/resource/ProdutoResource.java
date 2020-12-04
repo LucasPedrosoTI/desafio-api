@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
+import com.gft.desafioapi.repository.filter.ProdutoFilter;
 import com.gft.desafioapi.service.ProdutoService;
 
 import io.swagger.annotations.Api;
@@ -39,8 +40,8 @@ public class ProdutoResource {
 
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
-	public Page<Produto> listarProdutos(Pageable pageable) {
-		return produtoRepository.findAll(pageable);
+	public Page<Produto> listarProdutos(ProdutoFilter filter, Pageable pageable) {
+		return produtoService.pesquisarProdutos(filter, pageable);
 	}
 
 	@ApiOperation("Retorna um produto por ID")

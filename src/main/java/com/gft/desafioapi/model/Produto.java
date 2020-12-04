@@ -65,10 +65,10 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	@ApiModelProperty(example = "10", allowEmptyValue = false, required = true)
 	@NotNull
 	@Min(value = 0)
-	@Max(value = 999999)
+	@Max(value = 9999999)
 	private Long quantidade;
 
-//	@JsonBackReference
+	// @JsonBackReference
 	@ApiModelProperty(position = 9, required = true, value = "ID do fornecedor")
 	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
 	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
@@ -81,8 +81,8 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	public Produto(Long id, @NotBlank @Size(min = 2) String nome, @NotBlank String codigoProduto,
 			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valor, @NotNull Boolean promocao,
-			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valorPromo, String imagem,
-			CategoriaEnum categoria, @NotNull @Size(min = 0) Long quantidade, Fornecedor fornecedor) {
+			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valorPromo, String imagem, CategoriaEnum categoria,
+			@NotNull @Size(min = 0) Long quantidade, Fornecedor fornecedor) {
 		super(id);
 		this.nome = nome;
 		this.codigoProduto = codigoProduto;
@@ -177,9 +177,9 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	@Override
 	public String toString() {
-		return "Produto [nome=" + nome + ", codigoProduto=" + codigoProduto + ", valor=" + valor + ", promocao="
-				+ promocao + ", valorPromo=" + valorPromo + ", imagem=" + imagem + ", categoria=" + categoria
-				+ ", quantidade=" + quantidade + ", fornecedor=" + fornecedor + "]";
+		return "Produto [nome=" + nome + ", codigoProduto=" + codigoProduto + ", valor=" + valor + ", promocao=" + promocao
+				+ ", valorPromo=" + valorPromo + ", imagem=" + imagem + ", categoria=" + categoria + ", quantidade="
+				+ quantidade + ", fornecedor=" + fornecedor + "]";
 	}
 
 	@Override
@@ -200,8 +200,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 		Long quantidade = coalesce(this.getQuantidade(), other.getQuantidade());
 		Fornecedor fornecedor = coalesce(this.getFornecedor(), other.getFornecedor());
 
-		return new Produto(id, nome, codigoProduto, valor, promocao, valorPromo, imagem, categoria, quantidade,
-				fornecedor);
+		return new Produto(id, nome, codigoProduto, valor, promocao, valorPromo, imagem, categoria, quantidade, fornecedor);
 	}
 
 }
