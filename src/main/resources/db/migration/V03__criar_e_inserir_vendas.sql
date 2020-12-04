@@ -1,16 +1,18 @@
 CREATE TABLE IF NOT EXISTS venda (
 	id bigint not null unique auto_increment primary key,
     cliente_id bigint,
+    fornecedor_id bigint,
     data_compra date not null,
     total_compra decimal(10,2),
     
     CHECK (total_compra >= 0),
-    FOREIGN KEY (cliente_id) REFERENCES cliente(id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = innoDB default charset = utf8mb4;
 
-INSERT INTO venda (cliente_id, data_compra, total_compra) values
-(1, '2020-11-29', 12000.00),
-(2, '2020-11-30', 7800.50);
+INSERT INTO venda (cliente_id, fornecedor_id, data_compra, total_compra) values
+(1, 1, '2020-11-29', 12000.00),
+(2, 2, '2020-11-30', 7800.50);
 
 CREATE TABLE IF NOT EXISTS venda_produto (
 	id bigint not null unique auto_increment primary key,

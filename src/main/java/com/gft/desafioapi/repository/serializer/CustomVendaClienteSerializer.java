@@ -21,8 +21,8 @@ public class CustomVendaClienteSerializer extends StdSerializer<Cliente> {
 	}
 
 	@Override
-	public void serialize(Cliente cliete, JsonGenerator generator, SerializerProvider provider) throws IOException {
-		generator.writeObject(Map.of("id", cliete.getId()));
+	public void serialize(Cliente cliente, JsonGenerator generator, SerializerProvider provider) throws IOException {
+		generator.writeObject(Map.of("id", cliente.getId()));
 	}
 
 }
