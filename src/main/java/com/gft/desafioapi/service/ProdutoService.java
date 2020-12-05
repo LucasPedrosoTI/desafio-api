@@ -1,9 +1,14 @@
 package com.gft.desafioapi.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
@@ -78,6 +85,25 @@ public class ProdutoService {
 		return Constants.MAP_SUCCESS_TRUE;
 	}
 
+	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException {
+
+		Produto produto = findProdutoById(id);
+
+		String fileName = getRandomString() + "_" + StringUtils.cleanPath(imagem.getOriginalFilename());
+
+		Path fileLocation = Paths.get("src\\main\\resources\\static\\uploads\\" + fileName);
+
+		Files.write(fileLocation, imagem.getBytes());
+
+		produto.setImagem(fileName);
+
+		return produtoRepository.save(produto);
+	}
+
+	private String getRandomString() {
+		return new Random().nextInt(999999) + "_" + System.currentTimeMillis();
+	}
+
 	private void validatePromocao(Produto produto) {
 		if (!produto.isPromocao() && Objects.nonNull(produto.getValorPromo())) {
 			throw new DataIntegrityViolationException(Constants.PRODUTO_VALOR_PROMO_MESSAGE);
@@ -93,5 +119,6 @@ public class ProdutoService {
 			throw new EmptyResultDataAccessException(Constants.FORNECEDOR_INEXISTENTE, 1);
 		}
 	}
+
 
 }
