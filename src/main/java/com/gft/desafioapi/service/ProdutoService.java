@@ -35,6 +35,7 @@ public class ProdutoService {
 	@Autowired
 	FornecedorService fornecedorService;
 
+
 	public Page<Produto> pesquisarProdutos(ProdutoFilter filter, Pageable pageable) {
 
 		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
@@ -51,7 +52,8 @@ public class ProdutoService {
 				pageable);
 	}
 
-	public Produto findProdutoById(Long id) {
+
+	public Produto findProdutoById(Long id) throws InterruptedException {
 		return produtoRepository.findById(id).orElseThrow(() -> {
 			throw new EmptyResultDataAccessException(1);
 		});
@@ -70,7 +72,7 @@ public class ProdutoService {
 		return produtoRepository.save(produto);
 	}
 
-	public Produto update(Long id, Produto produto) {
+	public Produto update(Long id, Produto produto) throws InterruptedException {
 
 		Produto produtoAtualizado = produto.coalesce(findProdutoById(id), id);
 
@@ -85,7 +87,7 @@ public class ProdutoService {
 		return Constants.MAP_SUCCESS_TRUE;
 	}
 
-	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException {
+	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException, InterruptedException {
 
 		Produto produto = findProdutoById(id);
 

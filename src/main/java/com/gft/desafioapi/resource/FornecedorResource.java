@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,12 +40,15 @@ public class FornecedorResource {
 	@Autowired
 	FornecedorService fornecedorService;
 
+	@Cacheable(value = "custom-cache", key = "'FornecedoresInCache'+#filter")
 	@ApiOperation("Lista todos os fornecedores")
 	@GetMapping
 	public Page<Fornecedor> listarFornecedores(FornecedorFilter filter, Pageable pageable) {
 		return fornecedorService.findAllWithFilter(filter, pageable);
 	}
 
+	@CacheEvict(value = "custom-cache", key = "'FornecedorInCache'+#id", condition = "#id == null")
+	@Cacheable(value = "custom-cache", key = "'FornecedorInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um fornecedor por ID")
 	@GetMapping("/{id}")
 	public Fornecedor encontrarFornecedorPorId(@PathVariable Long id) {

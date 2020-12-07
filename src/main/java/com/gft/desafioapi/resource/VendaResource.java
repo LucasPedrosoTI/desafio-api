@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,12 +40,15 @@ public class VendaResource {
 	@Autowired
 	VendaService vendaService;
 
+	@Cacheable(value = "custom-cache", key = "'VendasInCache'+#filter")
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
 	public Page<Venda> listarVendas(VendaFilter filter, Pageable pageable) {
 		return vendaService.findAllWithFilter(filter, pageable);
 	}
 
+	@CacheEvict(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id == null")
+	@Cacheable(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna uma venda por ID")
 	@GetMapping("/{id}")
 	public Venda encontrarVendaPorId(@PathVariable Long id) {

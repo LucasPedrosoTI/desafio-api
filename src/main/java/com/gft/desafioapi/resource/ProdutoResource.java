@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,15 +44,18 @@ public class ProdutoResource {
 	@Autowired
 	ProdutoService produtoService;
 
+	@Cacheable(value = "custom-cache", key = "'ProdutosInCache'+#filter")
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
 	public Page<Produto> listarProdutos(ProdutoFilter filter, Pageable pageable) {
 		return produtoService.pesquisarProdutos(filter, pageable);
 	}
 
+	@CacheEvict(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id == null")
+	@Cacheable(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um produto por ID")
 	@GetMapping("/{id}")
-	public Produto encontrarProdutoPorId(@PathVariable Long id) {
+	public Produto encontrarProdutoPorId(@PathVariable Long id) throws InterruptedException {
 		return produtoService.findProdutoById(id);
 	}
 
@@ -64,7 +69,7 @@ public class ProdutoResource {
 
 	@ApiOperation("Atualiza os dados de um produto por ID")
 	@PutMapping("/{id}")
-	public Produto atualizarProduto(@PathVariable Long id, @RequestBody Produto produto) {
+	public Produto atualizarProduto(@PathVariable Long id, @RequestBody Produto produto) throws InterruptedException {
 		return produtoService.update(id, produto);
 	}
 
@@ -95,7 +100,7 @@ public class ProdutoResource {
 	@ApiOperation("Faz o upload de uma imagem")
 	@PutMapping(path = "/{id}/imagem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public Produto uploadImagem(@RequestPart MultipartFile imagem, @PathVariable Long id)
-			throws IOException {
+			throws IOException, InterruptedException {
 		return produtoService.salvarImagem(imagem, id);
 	}
 

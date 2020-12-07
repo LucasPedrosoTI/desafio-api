@@ -23,6 +23,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -111,7 +112,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ BadCredentialsException.class, InvalidGrantException.class, UsernameNotFoundException.class,
-		AuthenticationException.class })
+		AuthenticationException.class, RequestRejectedException.class })
 	public ResponseEntity<Object> handleBadCredentialsException(Exception ex, WebRequest request) {
 
 		String mensagemUsuario = this.messageSource.getMessage("recurso.acesso-negado", null,

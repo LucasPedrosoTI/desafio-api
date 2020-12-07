@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,12 +40,15 @@ public class ClienteResource {
 	@Autowired
 	ClienteService clienteService;
 
+	@Cacheable(value = "custom-cache", key = "'ClientesInCache'+#filter")
 	@ApiOperation("Lista todos os clientes")
 	@GetMapping
 	public Page<Cliente> listarClientes(ClienteFilter filter, Pageable pageable) {
 		return clienteService.pesquisarClientes(filter, pageable);
 	}
 
+	@CacheEvict(value = "custom-cache", key = "'ClienteInCache'+#id", condition = "#id == null")
+	@Cacheable(value = "custom-cache", key = "'ClienteInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um cliente por ID")
 	@GetMapping("/{id}")
 	public Cliente encontrarClientePorId(@PathVariable Long id) {
