@@ -34,6 +34,7 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 	@DecimalMax(value = "9999999")
 	private BigDecimal totalCompra;
 
+	@ApiModelProperty(required = true, allowEmptyValue = false, example = "03/12/2020", value = "Data da compra")
 	@NotNull
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCompra;
