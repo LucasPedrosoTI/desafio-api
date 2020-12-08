@@ -2,11 +2,13 @@ package com.gft.desafioapi.resource;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
 import com.gft.desafioapi.repository.filter.ClienteFilter;
@@ -40,6 +43,9 @@ public class ClienteResource {
 	@Autowired
 	ClienteService clienteService;
 
+	@Autowired
+	ApplicationEventPublisher publisher;
+
 	@Cacheable(value = "custom-cache", key = "'ClientesInCache'+#filter")
 	@ApiOperation("Lista todos os clientes")
 	@GetMapping
@@ -58,8 +64,12 @@ public class ClienteResource {
 	@ApiOperation("Cadastra um novo cliente")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Cliente criarCliente(@RequestBody @Valid Cliente cliente) {
-		return clienteService.criar(cliente);
+	public Cliente criarCliente(@RequestBody @Valid Cliente cliente, HttpServletResponse response) {
+		Cliente clienteSalvo = clienteService.criar(cliente);
+
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, clienteSalvo.getId()));
+
+		return clienteSalvo;
 	}
 
 	@ApiOperation("Atualiza os dados de um cliente por ID")

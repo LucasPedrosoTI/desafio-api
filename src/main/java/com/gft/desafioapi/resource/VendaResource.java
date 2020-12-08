@@ -2,11 +2,13 @@ package com.gft.desafioapi.resource;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
 import com.gft.desafioapi.repository.filter.VendaFilter;
@@ -40,6 +43,9 @@ public class VendaResource {
 	@Autowired
 	VendaService vendaService;
 
+	@Autowired
+	ApplicationEventPublisher publisher;
+
 	@Cacheable(value = "custom-cache", key = "'VendasInCache'+#filter")
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
@@ -58,9 +64,10 @@ public class VendaResource {
 	@ApiOperation("Cadastra uma nova venda")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Venda criarVenda(@RequestBody @Valid Venda venda) {
-
-		return vendaService.create(venda);
+	public Venda criarVenda(@RequestBody @Valid Venda venda, HttpServletResponse response) {
+		Venda vendaCriada = vendaService.create(venda);
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaCriada.getId()));
+		return vendaCriada;
 	}
 
 	@ApiOperation("Atualiza os dados de uma venda por ID")

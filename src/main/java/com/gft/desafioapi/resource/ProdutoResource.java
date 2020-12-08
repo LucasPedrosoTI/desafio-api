@@ -3,11 +3,13 @@ package com.gft.desafioapi.resource;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
 import com.gft.desafioapi.repository.filter.ProdutoFilter;
@@ -44,6 +47,9 @@ public class ProdutoResource {
 	@Autowired
 	ProdutoService produtoService;
 
+	@Autowired
+	ApplicationEventPublisher publisher;
+
 	@Cacheable(value = "custom-cache", key = "'ProdutosInCache'+#filter")
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
@@ -62,9 +68,10 @@ public class ProdutoResource {
 	@ApiOperation("Cadastra um novo produto")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Produto criarProduto(@RequestBody @Valid Produto produto) {
-
-		return produtoService.create(produto);
+	public Produto criarProduto(@RequestBody @Valid Produto produto, HttpServletResponse response) {
+		Produto produtoSalvo = produtoService.create(produto);
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, produtoSalvo.getId()));
+		return produtoSalvo;
 	}
 
 	@ApiOperation("Atualiza os dados de um produto por ID")

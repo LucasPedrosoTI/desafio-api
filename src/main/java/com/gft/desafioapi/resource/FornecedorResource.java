@@ -2,11 +2,13 @@ package com.gft.desafioapi.resource;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
 import com.gft.desafioapi.repository.filter.FornecedorFilter;
@@ -40,6 +43,9 @@ public class FornecedorResource {
 	@Autowired
 	FornecedorService fornecedorService;
 
+	@Autowired
+	ApplicationEventPublisher publisher;
+
 	@Cacheable(value = "custom-cache", key = "'FornecedoresInCache'+#filter")
 	@ApiOperation("Lista todos os fornecedores")
 	@GetMapping
@@ -58,8 +64,13 @@ public class FornecedorResource {
 	@ApiOperation("Cadastra um novo fornecedor")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Fornecedor criarFornecedor(@RequestBody @Valid Fornecedor fornecedor) {
-		return fornecedorService.create(fornecedor);
+	public Fornecedor criarFornecedor(@RequestBody @Valid Fornecedor fornecedor, HttpServletResponse response) {
+
+		Fornecedor fornecedorSalvo = fornecedorService.create(fornecedor);
+
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, fornecedorSalvo.getId()));
+
+		return fornecedorSalvo;
 	}
 
 	@ApiOperation("Atualiza os dados de um fornecedor por ID")
@@ -71,6 +82,7 @@ public class FornecedorResource {
 	@ApiOperation("Exclui um fornecedor por ID")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Map<String, Boolean>> excluirFornecedor(@PathVariable Long id) {
+
 		return fornecedorService.delete(id);
 	}
 
