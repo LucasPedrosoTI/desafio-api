@@ -4,14 +4,10 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
 
 import com.gft.desafioapi.utils.Coalesce;
-
-import io.swagger.annotations.ApiModelProperty;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
@@ -19,25 +15,18 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(example = "Apple", allowEmptyValue = false, required = true)
-	@NotBlank
-	@Size(min = 2)
 	private String nome;
 
-	@ApiModelProperty(example = "89000895000178", allowEmptyValue = false, required = true, notes = "Sem pontos e não permite duplicades")
-	@NotBlank
-	@CNPJ()
+	@CNPJ
 	private String cnpj;
 
-	@ApiModelProperty(hidden = true)
 	@OneToMany(mappedBy = "fornecedor")
-//	@JsonManagedReference
 	private List<Produto> produtos;
 
 	public Fornecedor() {
 	}
 
-	public Fornecedor(Long id, @NotBlank @Size(min = 2) String nome, @NotBlank @CNPJ String cnpj,
+	public Fornecedor(Long id, String nome, String cnpj,
 			List<Produto> produtos) {
 		super(id);
 		this.nome = nome;

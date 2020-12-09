@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gft.desafioapi.converter.FornecedorConverter;
+import com.gft.desafioapi.dto.FornecedorDTO;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
@@ -44,39 +46,45 @@ public class FornecedorResource {
 	FornecedorService fornecedorService;
 
 	@Autowired
+	FornecedorConverter converter;
+
+	@Autowired
 	ApplicationEventPublisher publisher;
 
 	@Cacheable(value = "custom-cache", key = "'FornecedoresInCache'+#filter")
 	@ApiOperation("Lista todos os fornecedores")
 	@GetMapping
-	public Page<Fornecedor> listarFornecedores(FornecedorFilter filter, Pageable pageable) {
-		return fornecedorService.findAllWithFilter(filter, pageable);
+	public Page<FornecedorDTO> listarFornecedores(FornecedorFilter filter, Pageable pageable) {
+		return converter.entityToDto(fornecedorService.findAllWithFilter(filter, pageable));
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'FornecedorInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'FornecedorInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um fornecedor por ID")
 	@GetMapping("/{id}")
-	public Fornecedor encontrarFornecedorPorId(@PathVariable Long id) {
-		return fornecedorService.findFornecedorById(id);
+	public FornecedorDTO encontrarFornecedorPorId(@PathVariable Long id) {
+		return converter.entityToDto(fornecedorService.findFornecedorById(id));
 	}
 
 	@ApiOperation("Cadastra um novo fornecedor")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Fornecedor criarFornecedor(@RequestBody @Valid Fornecedor fornecedor, HttpServletResponse response) {
+	public FornecedorDTO criarFornecedor(@RequestBody @Valid FornecedorDTO dto, HttpServletResponse response) {
 
-		Fornecedor fornecedorSalvo = fornecedorService.create(fornecedor);
+		Fornecedor fornecedor = fornecedorService.create(converter.dtoToEntity(dto));
 
-		publisher.publishEvent(new RecursoCriadoEvent(this, response, fornecedorSalvo.getId()));
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, fornecedor.getId()));
 
-		return fornecedorSalvo;
+		return converter.entityToDto(fornecedor);
 	}
 
 	@ApiOperation("Atualiza os dados de um fornecedor por ID")
 	@PutMapping("/{id}")
-	public Fornecedor atualizarFornecedor(@PathVariable Long id, @RequestBody Fornecedor fornecedor) {
-		return fornecedorService.update(id, fornecedor);
+	public FornecedorDTO atualizarFornecedor(@PathVariable Long id, @RequestBody FornecedorDTO dto) {
+
+		Fornecedor fornecedor = fornecedorService.update(id, converter.dtoToEntity(dto));
+
+		return converter.entityToDto(fornecedor);
 	}
 
 	@ApiOperation("Exclui um fornecedor por ID")
@@ -88,20 +96,20 @@ public class FornecedorResource {
 
 	@ApiOperation("Lista os fornecedores em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<Fornecedor> listarFornecedoresAsc(Pageable pageable) {
-		return fornecedorRepository.findAllOrderByNomeAsc(pageable);
+	public Page<FornecedorDTO> listarFornecedoresAsc(Pageable pageable) {
+		return converter.entityToDto(fornecedorRepository.findAllOrderByNomeAsc(pageable));
 	}
 
 	@ApiOperation("Lista os fornecedores em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<Fornecedor> listarFornecedoresDesc(Pageable pageable) {
-		return fornecedorRepository.findAllOrderByNomeDesc(pageable);
+	public Page<FornecedorDTO> listarFornecedoresDesc(Pageable pageable) {
+		return converter.entityToDto(fornecedorRepository.findAllOrderByNomeDesc(pageable));
 	}
 
 	@ApiOperation("Busca fornecedores por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<Fornecedor> encontrarFornecedoresPorNome(@PathVariable String nome, Pageable pageable) {
-		return fornecedorRepository.findByNomeContaining(nome, pageable);
+	public Page<FornecedorDTO> encontrarFornecedoresPorNome(@PathVariable String nome, Pageable pageable) {
+		return converter.entityToDto(fornecedorRepository.findByNomeContaining(nome, pageable));
 	}
 
 }

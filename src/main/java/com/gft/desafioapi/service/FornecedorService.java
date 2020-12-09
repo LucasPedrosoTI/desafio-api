@@ -38,7 +38,7 @@ public class FornecedorService {
 		});
 	}
 
-	public Fornecedor update(Long id, Fornecedor fornecedor) {
+	public Fornecedor update(Long id, @Valid Fornecedor fornecedor) {
 
 		Fornecedor fornecedorAtualizado = fornecedor.coalesce(findFornecedorById(id), id);
 
