@@ -3,47 +3,30 @@ package com.gft.desafioapi.model;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gft.desafioapi.utils.Coalesce;
-
-import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(example = "Marco Santos", allowEmptyValue = false, required = true)
-	@NotBlank
-	@Size(min = 2, max = 100)
 	private String nome;
 
-	@ApiModelProperty(example = "email@gft.com", allowEmptyValue = false, required = true, notes = "Não permite duplicidades")
-	@NotBlank
-	@Email
 	private String email;
 
-	@ApiModelProperty(example = "S3nh@123", allowEmptyValue = false, required = true)
-	@NotBlank
 	private String senha;
 
-	@ApiModelProperty(example = "123456789", allowEmptyValue = false, required = true, notes = "Não permite duplicidades")
-	@NotBlank
 	private String documento;
 
-	@ApiModelProperty(example = "30/11/2020", allowEmptyValue = true, required = false, hidden = true)
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCadastro;
 
 	public Cliente() {
 	}
 
-	public Cliente(Long id, @NotBlank @Size(min = 2, max = 100) String nome, @NotBlank @Email String email,
-			@NotBlank String senha, @NotBlank String documento, LocalDate dataCadastro) {
+	public Cliente(Long id, String nome, String email, String senha, String documento, LocalDate dataCadastro) {
 		super(id);
 		this.nome = nome;
 		this.email = email;

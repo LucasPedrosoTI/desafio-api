@@ -43,13 +43,15 @@ public class ClienteService implements UserDetailsService {
 		return clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte, pageable);
 	}
 
-	public Cliente criar(Cliente cliente) {
+	public Cliente create(Cliente cliente) {
 
 		EntityUtils.setIdNull(cliente);
 
 		if (Objects.isNull(cliente.getDataCadastro())) {
 			cliente.setDataCadastro(LocalDate.now());
 		}
+
+		cliente.setSenha(encoder.encode(cliente.getSenha()));
 
 		return clienteRepository.save(cliente);
 

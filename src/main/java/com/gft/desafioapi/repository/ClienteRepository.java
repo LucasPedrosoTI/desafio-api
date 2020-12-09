@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import com.gft.desafioapi.model.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+
+	@Query("select c from Cliente c where c.nome like %?1%")
 	public Page<Cliente> findByNomeContaining(String nome, Pageable pageable);
 
 	@Query("select c from Cliente c order by c.nome asc")
