@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gft.desafioapi.converter.VendaConverter;
+import com.gft.desafioapi.dto.VendaDTO;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
@@ -44,36 +46,42 @@ public class VendaResource {
 	VendaService vendaService;
 
 	@Autowired
+	VendaConverter converter;
+
+	@Autowired
 	ApplicationEventPublisher publisher;
 
 	@Cacheable(value = "custom-cache", key = "'VendasInCache'+#filter")
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
-	public Page<Venda> listarVendas(VendaFilter filter, Pageable pageable) {
-		return vendaService.findAllWithFilter(filter, pageable);
+	public Page<VendaDTO> listarVendas(VendaFilter filter, Pageable pageable) {
+		return converter.entityToDto(vendaService.findAllWithFilter(filter, pageable));
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna uma venda por ID")
 	@GetMapping("/{id}")
-	public Venda encontrarVendaPorId(@PathVariable Long id) {
-		return vendaService.findVendaById(id);
+	public VendaDTO encontrarVendaPorId(@PathVariable Long id) {
+		return converter.entityToDto(vendaService.findVendaById(id));
 	}
 
 	@ApiOperation("Cadastra uma nova venda")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Venda criarVenda(@RequestBody @Valid Venda venda, HttpServletResponse response) {
-		Venda vendaCriada = vendaService.create(venda);
+	public VendaDTO criarVenda(@RequestBody @Valid VendaDTO dto, HttpServletResponse response) {
+		Venda vendaCriada = vendaService.create(converter.dtoToEntity(dto));
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaCriada.getId()));
-		return vendaCriada;
+		return converter.entityToDto(vendaCriada);
 	}
 
 	@ApiOperation("Atualiza os dados de uma venda por ID")
 	@PutMapping("/{id}")
-	public Venda atualizarVenda(@PathVariable Long id, @RequestBody Venda venda) {
-		return vendaService.update(id, venda);
+	public VendaDTO atualizarVenda(@PathVariable Long id, @RequestBody VendaDTO dto) {
+
+		Venda venda = vendaService.update(id, converter.dtoToEntity(dto));
+
+		return converter.entityToDto(venda);
 	}
 
 	@ApiOperation("Exclui uma venda por ID")

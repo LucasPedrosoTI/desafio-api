@@ -1,6 +1,7 @@
 package com.gft.desafioapi.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 
@@ -79,6 +80,28 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	public String toString() {
 		return "Cliente [nome=" + nome + ", email=" + email + ", senha=" + senha + ", documento=" + documento
 				+ ", dataCadastro=" + dataCadastro + ", getId()=" + getId() + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(dataCadastro, documento, email, nome, senha);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cliente other = (Cliente) obj;
+		return Objects.equals(dataCadastro, other.dataCadastro) && Objects.equals(documento, other.documento)
+				&& Objects.equals(email, other.email) && Objects.equals(nome, other.nome)
+				&& Objects.equals(senha, other.senha);
 	}
 
 	@Override
