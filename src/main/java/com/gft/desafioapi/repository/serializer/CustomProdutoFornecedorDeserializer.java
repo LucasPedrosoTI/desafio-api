@@ -8,7 +8,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -19,7 +18,7 @@ import com.gft.desafioapi.repository.FornecedorRepository;
 public class CustomProdutoFornecedorDeserializer extends StdDeserializer<Fornecedor> {
 
 	@Autowired
-	FornecedorRepository fornecedorRepository;
+	transient FornecedorRepository fornecedorRepository;
 
 	private static final long serialVersionUID = -839983745171929649L;
 
@@ -33,7 +32,7 @@ public class CustomProdutoFornecedorDeserializer extends StdDeserializer<Fornece
 
 	@Override
 	public Fornecedor deserialize(JsonParser jsonparser, DeserializationContext context)
-			throws IOException, JsonProcessingException {
+			throws IOException {
 
 		Long id = null;
 		String cnpj = null;

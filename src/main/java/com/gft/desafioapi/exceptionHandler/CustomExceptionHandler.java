@@ -33,11 +33,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @SuppressWarnings("deprecation")
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+
+	private static final String RECURSO_OPERACAO_NAO_PERMITIDA = "recurso.operacao-nao-permitida";
 
 	@Autowired
 	MessageSource messageSource;
@@ -54,7 +57,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
+		String mensagemUsuario = this.messageSource.getMessage(RECURSO_OPERACAO_NAO_PERMITIDA, null,
 				LocaleContextHolder.getLocale());
 		String mensagemDev = ExceptionUtils.getRootCauseMessage(ex);
 
@@ -67,7 +70,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
+		String mensagemUsuario = this.messageSource.getMessage(RECURSO_OPERACAO_NAO_PERMITIDA, null,
 				LocaleContextHolder.getLocale());
 		String mensagemDev = ExceptionUtils.getRootCauseMessage(ex);
 
@@ -86,6 +89,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
 	}
 
+	@Override
+	protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		String mensagemUsuario = this.messageSource.getMessage(RECURSO_OPERACAO_NAO_PERMITIDA, null,
+				LocaleContextHolder.getLocale());
+		String mensagemDev = ExceptionUtils.getRootCauseMessage(ex);
+
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDev));
+
+		return this.handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+
 	@ExceptionHandler({ EmptyResultDataAccessException.class })
 	public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,
 			WebRequest request) {
@@ -102,7 +117,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
 		InvalidDataAccessApiUsageException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
-		String mensagemUsuario = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
+		String mensagemUsuario = this.messageSource.getMessage(RECURSO_OPERACAO_NAO_PERMITIDA, null,
 				LocaleContextHolder.getLocale());
 		String mensagemDev = ExceptionUtils.getRootCauseMessage(ex);
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gft.desafioapi.converter.ProdutoConverter;
+import com.gft.desafioapi.dto.ProdutoDTO;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
@@ -48,36 +51,47 @@ public class ProdutoResource {
 	ProdutoService produtoService;
 
 	@Autowired
+	ProdutoConverter converter;
+
+	@Autowired
 	ApplicationEventPublisher publisher;
 
 	@Cacheable(value = "custom-cache", key = "'ProdutosInCache'+#filter")
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
-	public Page<Produto> listarProdutos(ProdutoFilter filter, Pageable pageable) {
-		return produtoService.pesquisarProdutos(filter, pageable);
+	public Page<ProdutoDTO> listarProdutos(
+			ProdutoFilter filter,
+			Pageable pageable) {
+		return converter.entityToDto(produtoService.pesquisarProdutos(filter, pageable));
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um produto por ID")
 	@GetMapping("/{id}")
-	public Produto encontrarProdutoPorId(@PathVariable Long id) throws InterruptedException {
-		return produtoService.findProdutoById(id);
+	public ProdutoDTO encontrarProdutoPorId(@PathVariable Long id) throws InterruptedException {
+		return converter.entityToDto(produtoService.findProdutoById(id));
 	}
 
 	@ApiOperation("Cadastra um novo produto")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Produto criarProduto(@RequestBody @Valid Produto produto, HttpServletResponse response) {
-		Produto produtoSalvo = produtoService.create(produto);
+	public ProdutoDTO criarProduto(
+			@RequestBody @Valid ProdutoDTO dto,
+			HttpServletResponse response) {
+		Produto produtoSalvo = produtoService.create(converter.dtoToEntity(dto));
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, produtoSalvo.getId()));
-		return produtoSalvo;
+		return converter.entityToDto(produtoSalvo);
 	}
 
 	@ApiOperation("Atualiza os dados de um produto por ID")
 	@PutMapping("/{id}")
-	public Produto atualizarProduto(@PathVariable Long id, @RequestBody Produto produto) throws InterruptedException {
-		return produtoService.update(id, produto);
+	public ProdutoDTO atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO dto) throws InterruptedException {
+
+		Produto produto = produtoService.update(id, converter.dtoToEntity(dto));
+
+		return converter.entityToDto(produto);
+
 	}
 
 	@ApiOperation("Exclui um produto por ID")
@@ -88,27 +102,33 @@ public class ProdutoResource {
 
 	@ApiOperation("Lista os produtos em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<Produto> listarProdutosAsc(Pageable pageable) {
-		return produtoRepository.findAllOrderByNomeAsc(pageable);
+	public Page<ProdutoDTO> listarProdutosAsc(Pageable pageable) {
+		return converter.entityToDto(produtoRepository.findAllOrderByNomeAsc(pageable));
 	}
 
 	@ApiOperation("Lista os produtos em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<Produto> listarProdutosDesc(Pageable pageable) {
-		return produtoRepository.findAllOrderByNomeDesc(pageable);
+	public Page<ProdutoDTO> listarProdutosDesc(Pageable pageable) {
+		return converter.entityToDto(produtoRepository.findAllOrderByNomeDesc(pageable));
 	}
 
 	@ApiOperation("Busca produtos por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<Produto> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
-		return produtoRepository.findByNomeContaining(nome, pageable);
+	public Page<ProdutoDTO> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
+		return converter.entityToDto(produtoRepository.findByNomeContaining(nome, pageable));
 	}
 
 	@ApiOperation("Faz o upload de uma imagem")
 	@PutMapping(path = "/{id}/imagem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public Produto uploadImagem(@RequestPart MultipartFile imagem, @PathVariable Long id)
+	public ResponseEntity<Object> uploadImagem(@RequestPart MultipartFile imagem, @PathVariable Long id)
 			throws IOException, InterruptedException {
-		return produtoService.salvarImagem(imagem, id);
+		try {
+			return ResponseEntity.ok(converter.entityToDto(produtoService.salvarImagem(imagem, id)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(Map.of("mensagemUsuario", "Operação não permitida", "mensagemDev",
+							ExceptionUtils.getRootCauseMessage(e)));
+		}
 	}
 
 }

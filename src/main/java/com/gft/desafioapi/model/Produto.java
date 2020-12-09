@@ -1,29 +1,17 @@
 package com.gft.desafioapi.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorDeserializer;
-import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
 import com.gft.desafioapi.utils.Coalesce;
-
-import io.swagger.annotations.ApiModelProperty;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
@@ -31,69 +19,44 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(example = "Redmi Note 9", allowEmptyValue = false, required = true)
-	@NotBlank
-	@Size(min = 2)
 	private String nome;
 
-	@ApiModelProperty(example = "XIA01", allowEmptyValue = false, required = true, notes = "Não permite duplicidades")
-	@NotBlank
 	private String codigoProduto;
 
-	@ApiModelProperty(example = "1199.99", allowEmptyValue = false, required = true)
-	@NotNull
-	@DecimalMin(value = "0")
-	@DecimalMax(value = "9999999")
 	private BigDecimal valor;
 
-	@ApiModelProperty(example = "true", allowEmptyValue = false, required = true)
-	@NotNull
 	private Boolean promocao;
 
-	@ApiModelProperty(example = "1000", allowEmptyValue = true, required = false, value = "Caso promocao seja false, valor deve ser nulo")
-	@DecimalMin(value = "0")
-	@DecimalMax(value = "9999999")
 	private BigDecimal valorPromo;
 
-	@ApiModelProperty(example = "redmi-note9.png", allowEmptyValue = false, required = true)
 	private String imagem;
 
-	@ApiModelProperty(example = "SMARTPHONE", allowEmptyValue = false, required = true, notes = "Opções: SMARTPHONE,TABLET,NOTEBOOK,MODEM,ROUTER,DESKTOP,ACESSÓRIOS, OUTROS")
 	@Enumerated(EnumType.STRING)
 	private CategoriaEnum categoria;
 
-	@ApiModelProperty(example = "10", allowEmptyValue = false, required = true)
-	@NotNull
-	@Min(value = 0)
-	@Max(value = 9999999)
 	private Long quantidade;
 
-	// @JsonBackReference
-	@ApiModelProperty(position = 9, required = true, value = "ID do fornecedor")
-	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
-	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
 
+	private Produto(Builder builder) {
+		super(builder.id);
+		this.nome = builder.nome;
+		this.codigoProduto = builder.codigoProduto;
+		this.valor = builder.valor;
+		this.promocao = builder.promocao;
+		this.valorPromo = builder.valorPromo;
+		this.imagem = builder.imagem;
+		this.categoria = builder.categoria;
+		this.quantidade = builder.quantidade;
+		this.fornecedor = builder.fornecedor;
+	}
+
 	public Produto() {
 	}
 
-	public Produto(Long id, @NotBlank @Size(min = 2) String nome, @NotBlank String codigoProduto,
-			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valor, @NotNull Boolean promocao,
-			@NotNull @DecimalMin("0") @DecimalMax("9999999") BigDecimal valorPromo, String imagem, CategoriaEnum categoria,
-			@NotNull @Size(min = 0) Long quantidade, Fornecedor fornecedor) {
-		super(id);
-		this.nome = nome;
-		this.codigoProduto = codigoProduto;
-		this.valor = valor;
-		this.promocao = promocao;
-		this.valorPromo = valorPromo;
-		this.imagem = imagem;
-		this.categoria = categoria;
-		this.quantidade = quantidade;
-		this.fornecedor = fornecedor;
-	}
+
 
 	public String getNome() {
 		return nome;
@@ -120,19 +83,11 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public Boolean isPromocao() {
-		if (promocao instanceof Boolean) {
-			return promocao;
-		} else {
-			return null;
-		}
+		return promocao;
 	}
 
 	public void setPromocao(Boolean promocao) {
-		if (promocao instanceof Boolean) {
-			this.promocao = promocao;
-		} else {
-			return;
-		}
+		this.promocao = promocao;
 	}
 
 	public BigDecimal getValorPromo() {
@@ -177,30 +132,149 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	@Override
 	public String toString() {
-		return "Produto [nome=" + nome + ", codigoProduto=" + codigoProduto + ", valor=" + valor + ", promocao=" + promocao
-				+ ", valorPromo=" + valorPromo + ", imagem=" + imagem + ", categoria=" + categoria + ", quantidade="
-				+ quantidade + ", fornecedor=" + fornecedor + "]";
+		return "Produto [nome=" + nome + ", codigoProduto=" + codigoProduto + ", valor=" + valor + ", promocao="
+				+ promocao + ", valorPromo=" + valorPromo + ", imagem=" + imagem + ", categoria=" + categoria
+				+ ", quantidade=" + quantidade + ", fornecedor=" + fornecedor + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(categoria, codigoProduto, fornecedor, imagem, nome, promocao, quantidade,
+				valor, valorPromo);
+		return result;
+	}
+
+	@Override
+	public boolean equals(
+			Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Produto other = (Produto) obj;
+		return categoria == other.categoria && Objects.equals(codigoProduto, other.codigoProduto)
+				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(imagem, other.imagem)
+				&& Objects.equals(nome, other.nome) && Objects.equals(promocao, other.promocao)
+				&& Objects.equals(quantidade, other.quantidade) && Objects.equals(valor, other.valor)
+				&& Objects.equals(valorPromo, other.valorPromo);
 	}
 
 	@Override
 	public Produto coalesce(Produto other, Long id) {
-		BigDecimal valorPromo = null;
+		BigDecimal valorPromoCoalesced = null;
 
-		String nome = coalesce(this.getNome(), other.getNome());
-		String codigoProduto = coalesce(this.getCodigoProduto(), other.getCodigoProduto());
-		BigDecimal valor = coalesce(this.getValor(), other.getValor());
-		Boolean promocao = coalesce(this.isPromocao(), other.isPromocao());
+		String nomeCoalesced = coalesce(this.getNome(), other.getNome());
+		String codigoProdutoCoalesced = coalesce(this.getCodigoProduto(), other.getCodigoProduto());
+		BigDecimal valorCoalesced = coalesce(this.getValor(), other.getValor());
+		Boolean promocaoCoalesced = coalesce(this.isPromocao(), other.isPromocao());
 
-		if (promocao) {
-			valorPromo = coalesce(this.getValorPromo(), other.getValorPromo());
+		if (Boolean.TRUE.equals(promocaoCoalesced)) {
+			valorPromoCoalesced = coalesce(this.getValorPromo(), other.getValorPromo());
 		}
 
-		String imagem = coalesce(this.getImagem(), other.getImagem());
-		CategoriaEnum categoria = coalesce(this.getCategoria(), other.getCategoria());
-		Long quantidade = coalesce(this.getQuantidade(), other.getQuantidade());
-		Fornecedor fornecedor = coalesce(this.getFornecedor(), other.getFornecedor());
+		String imagemCoalesced = coalesce(this.getImagem(), other.getImagem());
+		CategoriaEnum categoriaCoalesced = coalesce(this.getCategoria(), other.getCategoria());
+		Long quantidadeCoalesced = coalesce(this.getQuantidade(), other.getQuantidade());
+		Fornecedor fornecedorCoalesced = coalesce(this.getFornecedor(), other.getFornecedor());
 
-		return new Produto(id, nome, codigoProduto, valor, promocao, valorPromo, imagem, categoria, quantidade, fornecedor);
+		return Produto.builder()
+				.withId(id)
+				.withNome(nomeCoalesced)
+				.withCodigoProduto(codigoProdutoCoalesced)
+				.withValor(valorCoalesced)
+				.withPromocao(promocaoCoalesced)
+				.withValorPromo(valorPromoCoalesced)
+				.withImagem(imagemCoalesced)
+				.withCategoria(categoriaCoalesced)
+				.withQuantidade(quantidadeCoalesced)
+				.withFornecedor(fornecedorCoalesced)
+				.build();
+	}
+
+	/**
+	 * Creates builder to build {@link Produto}.
+	 * 
+	 * @return created builder
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	/**
+	 * Builder to build {@link Produto}.
+	 */
+	public static final class Builder {
+		private Long id;
+		private String nome;
+		private String codigoProduto;
+		private BigDecimal valor;
+		private Boolean promocao;
+		private BigDecimal valorPromo;
+		private String imagem;
+		private CategoriaEnum categoria;
+		private Long quantidade;
+		private Fornecedor fornecedor;
+
+		private Builder() {
+		}
+
+		public Builder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withNome(String nome) {
+			this.nome = nome;
+			return this;
+		}
+
+		public Builder withCodigoProduto(String codigoProduto) {
+			this.codigoProduto = codigoProduto;
+			return this;
+		}
+
+		public Builder withValor(BigDecimal valor) {
+			this.valor = valor;
+			return this;
+		}
+
+		public Builder withPromocao(Boolean promocao) {
+			this.promocao = promocao;
+			return this;
+		}
+
+		public Builder withValorPromo(BigDecimal valorPromo) {
+			this.valorPromo = valorPromo;
+			return this;
+		}
+
+		public Builder withImagem(String imagem) {
+			this.imagem = imagem;
+			return this;
+		}
+
+		public Builder withCategoria(CategoriaEnum categoria) {
+			this.categoria = categoria;
+			return this;
+		}
+
+		public Builder withQuantidade(Long quantidade) {
+			this.quantidade = quantidade;
+			return this;
+		}
+
+		public Builder withFornecedor(Fornecedor fornecedor) {
+			this.fornecedor = fornecedor;
+			return this;
+		}
+
+		public Produto build() {
+			return new Produto(this);
+		}
 	}
 
 }

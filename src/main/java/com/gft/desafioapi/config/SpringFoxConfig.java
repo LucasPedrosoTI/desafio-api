@@ -88,14 +88,14 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 
 	// MANUALLY ADD INPUT FOR ACCESS TOKEN TO ALL ENDPOINTS
 
-	// private List<Parameter> commonParameters() {
-	// List<Parameter> parameters = new ArrayList<Parameter>();
-	// parameters.add(new ParameterBuilder().name("access_token").description("Token
-	// for authorization")
-	// .modelRef(new
-	// ModelRef("string")).parameterType("query").required(true).build());
-	//
-	// return parameters;
-	// }
+	/*
+	 * private List<Parameter> commonParameters() { List<Parameter> parameters = new
+	 * ArrayList<Parameter>(); parameters.add(new
+	 * ParameterBuilder().name("access_token").description("Token for
+	 * authorization") .modelRef(new
+	 * ModelRef("string")).parameterType("query").required(true).build());
+	 * 
+	 * return parameters; }
+	 */
 
 }

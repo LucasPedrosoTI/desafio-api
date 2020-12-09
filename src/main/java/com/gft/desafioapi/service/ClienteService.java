@@ -80,7 +80,7 @@ public class ClienteService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String email) {
 		Cliente usuario = Optional.ofNullable(clienteRepository.findByEmail(email))
 				.orElseThrow(() -> new UsernameNotFoundException(Constants.CLIENTE_INEXISTENTE));
 

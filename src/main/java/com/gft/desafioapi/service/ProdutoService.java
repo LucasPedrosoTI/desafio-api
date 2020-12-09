@@ -53,7 +53,7 @@ public class ProdutoService {
 	}
 
 
-	public Produto findProdutoById(Long id) throws InterruptedException {
+	public Produto findProdutoById(Long id) {
 		return produtoRepository.findById(id).orElseThrow(() -> {
 			throw new EmptyResultDataAccessException(1);
 		});
@@ -72,7 +72,7 @@ public class ProdutoService {
 		return produtoRepository.save(produto);
 	}
 
-	public Produto update(Long id, Produto produto) throws InterruptedException {
+	public Produto update(Long id, Produto produto) {
 
 		Produto produtoAtualizado = produto.coalesce(findProdutoById(id), id);
 
@@ -87,11 +87,13 @@ public class ProdutoService {
 		return Constants.MAP_SUCCESS_TRUE;
 	}
 
-	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException, InterruptedException {
+	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException {
 
 		Produto produto = findProdutoById(id);
 
-		String fileName = getRandomString() + "_" + StringUtils.cleanPath(imagem.getOriginalFilename());
+		String fileName = getRandomString() + "_"
+				+ StringUtils.cleanPath(Optional.ofNullable(imagem.getOriginalFilename())
+						.orElse("no-name"));
 
 		Path fileLocation = Paths.get("src\\main\\resources\\static\\uploads\\" + fileName);
 
@@ -100,6 +102,7 @@ public class ProdutoService {
 		produto.setImagem(fileName);
 
 		return produtoRepository.save(produto);
+
 	}
 
 	private String getRandomString() {
@@ -107,11 +110,11 @@ public class ProdutoService {
 	}
 
 	private void validatePromocao(Produto produto) {
-		if (!produto.isPromocao() && Objects.nonNull(produto.getValorPromo())) {
+		if (Boolean.FALSE.equals(produto.isPromocao()) && Objects.nonNull(produto.getValorPromo())) {
 			throw new DataIntegrityViolationException(Constants.PRODUTO_VALOR_PROMO_MESSAGE);
 		}
 
-		if (produto.isPromocao() && Objects.isNull(produto.getValorPromo())) {
+		if (Boolean.TRUE.equals(produto.isPromocao()) && Objects.isNull(produto.getValorPromo())) {
 			throw new DataIntegrityViolationException(Constants.PRODUTO_VALOR_PROMO_MESSAGE);
 		}
 	}
