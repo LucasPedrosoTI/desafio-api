@@ -17,7 +17,8 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<spring-fox.version>2.7.0</spring-fox.version>
+		<springfox.version>2.7.0</springfox.version>
+		<flyway.version>5.2.4</flyway.version>
 	</properties>
 
 	<dependencies>
@@ -36,6 +37,7 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 
 		<dependency>
@@ -63,12 +65,12 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>${spring-fox.version}</version>
+			<version>${springfox.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${spring-fox.version}</version>
+			<version>${springfox.version}</version>
 		</dependency>
 
 		<dependency>
