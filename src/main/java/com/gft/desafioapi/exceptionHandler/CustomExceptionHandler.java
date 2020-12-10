@@ -1,6 +1,7 @@
 package com.gft.desafioapi.exceptionHandler;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,18 +105,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({ EmptyResultDataAccessException.class })
 	public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,
 			WebRequest request) {
-		String mensagemUsuario = messageSource.getMessage("recurso.nao-encontrado", null,
+		String mensagemUsuario = this.messageSource.getMessage("recurso.nao-encontrado", null,
 				LocaleContextHolder.getLocale());
 		String mensagemDev = ex.toString();
 
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDev));
 
-		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+		return this.handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
 	@ExceptionHandler({ DataIntegrityViolationException.class, ConstraintViolationException.class,
-		MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
-		InvalidDataAccessApiUsageException.class })
+			MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
+			InvalidDataAccessApiUsageException.class, SQLException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
 		String mensagemUsuario = this.messageSource.getMessage(RECURSO_OPERACAO_NAO_PERMITIDA, null,
 				LocaleContextHolder.getLocale());
@@ -127,7 +128,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ BadCredentialsException.class, InvalidGrantException.class, UsernameNotFoundException.class,
-		AuthenticationException.class, RequestRejectedException.class })
+			AuthenticationException.class, RequestRejectedException.class })
 	public ResponseEntity<Object> handleBadCredentialsException(Exception ex, WebRequest request) {
 
 		String mensagemUsuario = this.messageSource.getMessage("recurso.acesso-negado", null,

@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -21,8 +23,8 @@ import org.springframework.stereotype.Service;
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
 import com.gft.desafioapi.repository.filter.ClienteFilter;
-import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.ApiUtils;
+import com.gft.desafioapi.utils.Constants;
 
 @Service
 public class ClienteService implements UserDetailsService {
@@ -40,7 +42,8 @@ public class ClienteService implements UserDetailsService {
 		final LocalDate dataCadastroDe = Optional.ofNullable(filter.getDataCadastroDe()).orElse(Constants.MIN_DATE);
 		final LocalDate dataCadastroAte = Optional.ofNullable(filter.getDataCadastroAte()).orElse(Constants.MAX_DATE);
 
-		return clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte, pageable);
+		return this.clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte,
+				pageable);
 	}
 
 	public Cliente create(Cliente cliente) {
@@ -51,37 +54,37 @@ public class ClienteService implements UserDetailsService {
 			cliente.setDataCadastro(LocalDate.now());
 		}
 
-		cliente.setSenha(encoder.encode(cliente.getSenha()));
+		cliente.setSenha(this.encoder.encode(cliente.getSenha()));
 
-		return clienteRepository.save(cliente);
+		return this.clienteRepository.save(cliente);
 
 	}
 
 	public Cliente findClienteById(Long id) {
-		return clienteRepository.findById(id).orElseThrow(() -> {
+		return this.clienteRepository.findById(id).orElseThrow(() -> {
 			throw new EmptyResultDataAccessException(1);
 		});
 	}
 
-	public Cliente update(Long id, Cliente cliente) {
-		Cliente clienteAtualizado = cliente.coalesce(findClienteById(id), id);
+	public Cliente update(Long id, @Valid Cliente cliente) {
+		Cliente clienteAtualizado = cliente.coalesce(this.findClienteById(id), id);
 
 		if (Objects.nonNull(cliente.getSenha())) {
-			clienteAtualizado.setSenha(encoder.encode(cliente.getSenha()));
+			clienteAtualizado.setSenha(this.encoder.encode(cliente.getSenha()));
 		}
 
-		return clienteRepository.save(clienteAtualizado);
+		return this.clienteRepository.save(clienteAtualizado);
 	}
 
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
-		clienteRepository.deleteById(id);
+		this.clienteRepository.deleteById(id);
 
 		return Constants.MAP_SUCCESS_TRUE;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) {
-		Cliente usuario = Optional.ofNullable(clienteRepository.findByEmail(email))
+		Cliente usuario = Optional.ofNullable(this.clienteRepository.findByEmail(email))
 				.orElseThrow(() -> new UsernameNotFoundException(Constants.CLIENTE_INEXISTENTE));
 
 		return new User(usuario.getEmail(), usuario.getSenha(),

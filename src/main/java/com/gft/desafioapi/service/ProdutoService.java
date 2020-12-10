@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,8 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
 import com.gft.desafioapi.repository.filter.ProdutoFilter;
-import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.ApiUtils;
+import com.gft.desafioapi.utils.Constants;
 
 @Service
 public class ProdutoService {
@@ -35,7 +37,6 @@ public class ProdutoService {
 	@Autowired
 	FornecedorService fornecedorService;
 
-
 	public Page<Produto> pesquisarProdutos(ProdutoFilter filter, Pageable pageable) {
 
 		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
@@ -45,16 +46,15 @@ public class ProdutoService {
 		final BigDecimal valorPromoDe = Optional.ofNullable(filter.getValorPromoDe()).orElse(BigDecimal.ZERO);
 		final BigDecimal valorPromoAte = Optional.ofNullable(filter.getValorPromoAte()).orElse(Constants.MAX_DECIMAL);
 		final Long quantidadeDe = Optional.ofNullable(filter.getQuantidadeDe()).orElse(0L);
-		final Long quantidadeAte = Optional.ofNullable(filter.getQuantidadeAte()).orElse(Constants.MAX_DECIMAL.longValue());
+		final Long quantidadeAte = Optional.ofNullable(filter.getQuantidadeAte())
+				.orElse(Constants.MAX_DECIMAL.longValue());
 
-		return produtoRepository.pesquisarProdutos(nome, codigoProduto, valorDe, valorAte, quantidadeDe, quantidadeAte,
-				valorPromoDe, valorPromoAte,
-				pageable);
+		return this.produtoRepository.pesquisarProdutos(nome, codigoProduto, valorDe, valorAte, quantidadeDe,
+				quantidadeAte, valorPromoDe, valorPromoAte, pageable);
 	}
 
-
 	public Produto findProdutoById(Long id) {
-		return produtoRepository.findById(id).orElseThrow(() -> {
+		return this.produtoRepository.findById(id).orElseThrow(() -> {
 			throw new EmptyResultDataAccessException(1);
 		});
 	}
@@ -63,37 +63,36 @@ public class ProdutoService {
 
 		ApiUtils.setIdNull(produto);
 
-		checkFornecedor(produto);
+		this.checkFornecedor(produto);
 
-		validatePromocao(produto);
+		this.validatePromocao(produto);
 
-		fornecedorService.findFornecedorById(produto.getFornecedor().getId());
+		this.fornecedorService.findFornecedorById(produto.getFornecedor().getId());
 
-		return produtoRepository.save(produto);
+		return this.produtoRepository.save(produto);
 	}
 
-	public Produto update(Long id, Produto produto) {
+	public Produto update(Long id, @Valid Produto produto) {
 
-		Produto produtoAtualizado = produto.coalesce(findProdutoById(id), id);
+		Produto produtoAtualizado = produto.coalesce(this.findProdutoById(id), id);
 
-		validatePromocao(produtoAtualizado);
+		this.validatePromocao(produtoAtualizado);
 
-		return produtoRepository.save(produtoAtualizado);
+		return this.produtoRepository.save(produtoAtualizado);
 	}
 
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
-		produtoRepository.deleteById(id);
+		this.produtoRepository.deleteById(id);
 
 		return Constants.MAP_SUCCESS_TRUE;
 	}
 
 	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException {
 
-		Produto produto = findProdutoById(id);
+		Produto produto = this.findProdutoById(id);
 
-		String fileName = getRandomString() + "_"
-				+ StringUtils.cleanPath(Optional.ofNullable(imagem.getOriginalFilename())
-						.orElse("no-name"));
+		String fileName = this.getRandomString() + "_"
+				+ StringUtils.cleanPath(Optional.ofNullable(imagem.getOriginalFilename()).orElse("no-name"));
 
 		Path fileLocation = Paths.get("src\\main\\resources\\static\\uploads\\" + fileName);
 
@@ -101,7 +100,7 @@ public class ProdutoService {
 
 		produto.setImagem(fileName);
 
-		return produtoRepository.save(produto);
+		return this.produtoRepository.save(produto);
 
 	}
 
@@ -124,6 +123,5 @@ public class ProdutoService {
 			throw new EmptyResultDataAccessException(Constants.FORNECEDOR_INEXISTENTE, 1);
 		}
 	}
-
 
 }

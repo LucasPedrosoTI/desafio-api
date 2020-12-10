@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gft.desafioapi.utils.Coalesce;
@@ -13,12 +15,16 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 
 	private static final long serialVersionUID = 1L;
 
+	@Size(min = 2, max = 100)
 	private String nome;
 
+	@Email
 	private String email;
 
+	@Size(min = 6, max = 100)
 	private String senha;
 
+	@Size(min = 2, max = 100)
 	private String documento;
 
 	@JsonFormat(pattern = "dd/MM/yyyy")
@@ -37,7 +43,7 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	}
 
 	public String getNome() {
-		return nome;
+		return this.nome;
 	}
 
 	public void setNome(String nome) {
@@ -45,7 +51,7 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	}
 
 	public String getEmail() {
-		return email;
+		return this.email;
 	}
 
 	public void setEmail(String email) {
@@ -53,7 +59,7 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	}
 
 	public String getSenha() {
-		return senha;
+		return this.senha;
 	}
 
 	public void setSenha(String senha) {
@@ -61,7 +67,7 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	}
 
 	public String getDocumento() {
-		return documento;
+		return this.documento;
 	}
 
 	public void setDocumento(String documento) {
@@ -69,7 +75,7 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	}
 
 	public LocalDate getDataCadastro() {
-		return dataCadastro;
+		return this.dataCadastro;
 	}
 
 	public void setDataCadastro(LocalDate dataCadastro) {
@@ -78,15 +84,15 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 
 	@Override
 	public String toString() {
-		return "Cliente [nome=" + nome + ", email=" + email + ", senha=" + senha + ", documento=" + documento
-				+ ", dataCadastro=" + dataCadastro + ", getId()=" + getId() + "]";
+		return "Cliente [nome=" + this.nome + ", email=" + this.email + ", senha=" + this.senha + ", documento="
+				+ this.documento + ", dataCadastro=" + this.dataCadastro + ", getId()=" + this.getId() + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(dataCadastro, documento, email, nome, senha);
+		result = prime * result + Objects.hash(this.dataCadastro, this.documento, this.email, this.nome, this.senha);
 		return result;
 	}
 
@@ -96,22 +102,22 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		Cliente other = (Cliente) obj;
-		return Objects.equals(dataCadastro, other.dataCadastro) && Objects.equals(documento, other.documento)
-				&& Objects.equals(email, other.email) && Objects.equals(nome, other.nome)
-				&& Objects.equals(senha, other.senha);
+		return Objects.equals(this.dataCadastro, other.dataCadastro) && Objects.equals(this.documento, other.documento)
+				&& Objects.equals(this.email, other.email) && Objects.equals(this.nome, other.nome)
+				&& Objects.equals(this.senha, other.senha);
 	}
 
 	@Override
 	public Cliente coalesce(Cliente other, Long id) {
 
-		String nome = coalesce(this.getNome(), other.getNome());
-		String email = coalesce(this.getEmail(), other.getEmail());
-		String senha = coalesce(this.getSenha(), other.getSenha());
-		String documento = coalesce(this.getDocumento(), other.getDocumento());
-		LocalDate dataCadastro = coalesce(this.getDataCadastro(), other.getDataCadastro());
+		String nome = this.coalesce(this.getNome(), other.getNome());
+		String email = this.coalesce(this.getEmail(), other.getEmail());
+		String senha = this.coalesce(this.getSenha(), other.getSenha());
+		String documento = this.coalesce(this.getDocumento(), other.getDocumento());
+		LocalDate dataCadastro = this.coalesce(this.getDataCadastro(), other.getDataCadastro());
 
 		return new Cliente(id, nome, email, senha, documento, dataCadastro);
 	}

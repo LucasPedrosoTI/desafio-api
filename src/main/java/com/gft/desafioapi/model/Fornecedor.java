@@ -5,17 +5,18 @@ import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
 
 import com.gft.desafioapi.utils.Coalesce;
-
 
 @Entity
 public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 
 	private static final long serialVersionUID = 1L;
 
+	@Size(min = 2, max = 100)
 	private String nome;
 
 	@CNPJ
@@ -27,8 +28,7 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 	public Fornecedor() {
 	}
 
-	public Fornecedor(Long id, String nome, String cnpj,
-			List<Produto> produtos) {
+	public Fornecedor(Long id, String nome, String cnpj, List<Produto> produtos) {
 		super(id);
 		this.nome = nome;
 		this.cnpj = cnpj;
@@ -36,7 +36,7 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 	}
 
 	public String getNome() {
-		return nome;
+		return this.nome;
 	}
 
 	public void setNome(String nome) {
@@ -44,7 +44,7 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 	}
 
 	public String getCnpj() {
-		return cnpj;
+		return this.cnpj;
 	}
 
 	public void setCnpj(String cnpj) {
@@ -52,7 +52,7 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 	}
 
 	public List<Produto> getProdutos() {
-		return produtos;
+		return this.produtos;
 	}
 
 	public void setProdutos(List<Produto> produtos) {
@@ -61,15 +61,15 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 
 	@Override
 	public String toString() {
-		return "Fornecedor [nome=" + nome + ", cnpj=" + cnpj + ", Id=" + getId() + "]";
+		return "Fornecedor [nome=" + this.nome + ", cnpj=" + this.cnpj + ", Id=" + this.getId() + "]";
 	}
 
 	@Override
 	public Fornecedor coalesce(Fornecedor other, Long id) {
 
-		String nome = coalesce(this.getNome(), other.getNome());
-		String cnpj = coalesce(this.getCnpj(), other.getCnpj());
-		List<Produto> produtos = coalesce(this.getProdutos(), other.getProdutos());
+		String nome = this.coalesce(this.getNome(), other.getNome());
+		String cnpj = this.coalesce(this.getCnpj(), other.getCnpj());
+		List<Produto> produtos = this.coalesce(this.getProdutos(), other.getProdutos());
 
 		return new Fornecedor(id, nome, cnpj, produtos);
 	}
@@ -78,7 +78,7 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(cnpj, nome, produtos);
+		result = prime * result + Objects.hash(this.cnpj, this.nome, this.produtos);
 		return result;
 	}
 
@@ -88,11 +88,11 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		Fornecedor other = (Fornecedor) obj;
-		return Objects.equals(cnpj, other.cnpj) && Objects.equals(nome, other.nome)
-				&& Objects.equals(produtos, other.produtos);
+		return Objects.equals(this.cnpj, other.cnpj) && Objects.equals(this.nome, other.nome)
+				&& Objects.equals(this.produtos, other.produtos);
 	}
 
 }

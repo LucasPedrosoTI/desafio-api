@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,8 +21,10 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	private static final long serialVersionUID = 1L;
 
+	@Size(min = 2, max = 100)
 	private String nome;
 
+	@Size(min = 2, max = 100)
 	private String codigoProduto;
 
 	private BigDecimal valor;
@@ -30,6 +33,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	private BigDecimal valorPromo;
 
+	@Size(min = 2)
 	private String imagem;
 
 	@Enumerated(EnumType.STRING)
@@ -59,10 +63,8 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	public Produto() {
 	}
 
-
-
 	public String getNome() {
-		return nome;
+		return this.nome;
 	}
 
 	public void setNome(String nome) {
@@ -70,7 +72,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public String getCodigoProduto() {
-		return codigoProduto;
+		return this.codigoProduto;
 	}
 
 	public void setCodigoProduto(String codigoProduto) {
@@ -78,7 +80,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public BigDecimal getValor() {
-		return valor;
+		return this.valor;
 	}
 
 	public void setValor(BigDecimal valor) {
@@ -86,7 +88,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public Boolean isPromocao() {
-		return promocao;
+		return this.promocao;
 	}
 
 	public void setPromocao(Boolean promocao) {
@@ -94,7 +96,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public BigDecimal getValorPromo() {
-		return valorPromo;
+		return this.valorPromo;
 	}
 
 	public void setValorPromo(BigDecimal valorPromo) {
@@ -102,7 +104,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public String getImagem() {
-		return imagem;
+		return this.imagem;
 	}
 
 	public void setImagem(String imagem) {
@@ -110,7 +112,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public CategoriaEnum getCategoria() {
-		return categoria;
+		return this.categoria;
 	}
 
 	public void setCategoria(CategoriaEnum categoria) {
@@ -118,7 +120,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public Long getQuantidade() {
-		return quantidade;
+		return this.quantidade;
 	}
 
 	public void setQuantidade(Long quantidade) {
@@ -126,7 +128,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public Fornecedor getFornecedor() {
-		return fornecedor;
+		return this.fornecedor;
 	}
 
 	public void setFornecedor(Fornecedor fornecedor) {
@@ -135,72 +137,64 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	@Override
 	public String toString() {
-		return "Produto [nome=" + nome + ", codigoProduto=" + codigoProduto + ", valor=" + valor + ", promocao="
-				+ promocao + ", valorPromo=" + valorPromo + ", imagem=" + imagem + ", categoria=" + categoria
-				+ ", quantidade=" + quantidade + ", fornecedor=" + fornecedor + "]";
+		return "Produto [nome=" + this.nome + ", codigoProduto=" + this.codigoProduto + ", valor=" + this.valor
+				+ ", promocao=" + this.promocao + ", valorPromo=" + this.valorPromo + ", imagem=" + this.imagem
+				+ ", categoria=" + this.categoria + ", quantidade=" + this.quantidade + ", fornecedor="
+				+ this.fornecedor + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(categoria, codigoProduto, fornecedor, imagem, nome, promocao, quantidade,
-				valor, valorPromo);
+		result = prime * result + Objects.hash(this.categoria, this.codigoProduto, this.fornecedor, this.imagem,
+				this.nome, this.promocao, this.quantidade, this.valor, this.valorPromo);
 		return result;
 	}
 
 	@Override
-	public boolean equals(
-			Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		Produto other = (Produto) obj;
-		return categoria == other.categoria && Objects.equals(codigoProduto, other.codigoProduto)
-				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(imagem, other.imagem)
-				&& Objects.equals(nome, other.nome) && Objects.equals(promocao, other.promocao)
-				&& Objects.equals(quantidade, other.quantidade) && Objects.equals(valor, other.valor)
-				&& Objects.equals(valorPromo, other.valorPromo);
+		return this.categoria == other.categoria && Objects.equals(this.codigoProduto, other.codigoProduto)
+				&& Objects.equals(this.fornecedor, other.fornecedor) && Objects.equals(this.imagem, other.imagem)
+				&& Objects.equals(this.nome, other.nome) && Objects.equals(this.promocao, other.promocao)
+				&& Objects.equals(this.quantidade, other.quantidade) && Objects.equals(this.valor, other.valor)
+				&& Objects.equals(this.valorPromo, other.valorPromo);
 	}
 
 	@Override
 	public Produto coalesce(Produto other, Long id) {
 		BigDecimal valorPromoCoalesced = null;
 
-		String nomeCoalesced = coalesce(this.getNome(), other.getNome());
-		String codigoProdutoCoalesced = coalesce(this.getCodigoProduto(), other.getCodigoProduto());
-		BigDecimal valorCoalesced = coalesce(this.getValor(), other.getValor());
-		Boolean promocaoCoalesced = coalesce(this.isPromocao(), other.isPromocao());
+		String nomeCoalesced = this.coalesce(this.getNome(), other.getNome());
+		String codigoProdutoCoalesced = this.coalesce(this.getCodigoProduto(), other.getCodigoProduto());
+		BigDecimal valorCoalesced = this.coalesce(this.getValor(), other.getValor());
+		Boolean promocaoCoalesced = this.coalesce(this.isPromocao(), other.isPromocao());
 
 		if (Boolean.TRUE.equals(promocaoCoalesced)) {
-			valorPromoCoalesced = coalesce(this.getValorPromo(), other.getValorPromo());
+			valorPromoCoalesced = this.coalesce(this.getValorPromo(), other.getValorPromo());
 		}
 
-		String imagemCoalesced = coalesce(this.getImagem(), other.getImagem());
-		CategoriaEnum categoriaCoalesced = coalesce(this.getCategoria(), other.getCategoria());
-		Long quantidadeCoalesced = coalesce(this.getQuantidade(), other.getQuantidade());
-		Fornecedor fornecedorCoalesced = coalesce(this.getFornecedor(), other.getFornecedor());
+		String imagemCoalesced = this.coalesce(this.getImagem(), other.getImagem());
+		CategoriaEnum categoriaCoalesced = this.coalesce(this.getCategoria(), other.getCategoria());
+		Long quantidadeCoalesced = this.coalesce(this.getQuantidade(), other.getQuantidade());
+		Fornecedor fornecedorCoalesced = this.coalesce(this.getFornecedor(), other.getFornecedor());
 
-		return Produto.builder()
-				.withId(id)
-				.withNome(nomeCoalesced)
-				.withCodigoProduto(codigoProdutoCoalesced)
-				.withValor(valorCoalesced)
-				.withPromocao(promocaoCoalesced)
-				.withValorPromo(valorPromoCoalesced)
-				.withImagem(imagemCoalesced)
-				.withCategoria(categoriaCoalesced)
-				.withQuantidade(quantidadeCoalesced)
-				.withFornecedor(fornecedorCoalesced)
-				.build();
+		return Produto.builder().withId(id).withNome(nomeCoalesced).withCodigoProduto(codigoProdutoCoalesced)
+				.withValor(valorCoalesced).withPromocao(promocaoCoalesced).withValorPromo(valorPromoCoalesced)
+				.withImagem(imagemCoalesced).withCategoria(categoriaCoalesced).withQuantidade(quantidadeCoalesced)
+				.withFornecedor(fornecedorCoalesced).build();
 	}
 
 	/**
 	 * Creates builder to build {@link Produto}.
-	 * 
+	 *
 	 * @return created builder
 	 */
 	public static Builder builder() {
