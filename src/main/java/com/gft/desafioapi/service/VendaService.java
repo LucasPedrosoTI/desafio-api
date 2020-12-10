@@ -18,7 +18,7 @@ import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
 import com.gft.desafioapi.repository.filter.VendaFilter;
 import com.gft.desafioapi.utils.Constants;
-import com.gft.desafioapi.utils.EntityUtils;
+import com.gft.desafioapi.utils.ApiUtils;
 
 @Service
 public class VendaService {
@@ -42,7 +42,7 @@ public class VendaService {
 	}
 
 	public Venda create(Venda venda) {
-		EntityUtils.setIdNull(venda);
+		ApiUtils.setIdNull(venda);
 
 		checkFornecedor(venda);
 

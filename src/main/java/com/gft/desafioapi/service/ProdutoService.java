@@ -24,7 +24,7 @@ import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
 import com.gft.desafioapi.repository.filter.ProdutoFilter;
 import com.gft.desafioapi.utils.Constants;
-import com.gft.desafioapi.utils.EntityUtils;
+import com.gft.desafioapi.utils.ApiUtils;
 
 @Service
 public class ProdutoService {
@@ -61,7 +61,7 @@ public class ProdutoService {
 
 	public Produto create(Produto produto) {
 
-		EntityUtils.setIdNull(produto);
+		ApiUtils.setIdNull(produto);
 
 		checkFornecedor(produto);
 

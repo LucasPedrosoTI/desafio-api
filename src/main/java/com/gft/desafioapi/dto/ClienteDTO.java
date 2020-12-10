@@ -1,15 +1,14 @@
 package com.gft.desafioapi.dto;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class ClienteDTO {
-
-	@ApiModelProperty(example = "1", allowEmptyValue = true, required = false, position = -1)
-	private Long id;
+public class ClienteDTO extends AbstractDTO {
 
 	@ApiModelProperty(example = "Marco Santos", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -33,19 +32,11 @@ public class ClienteDTO {
 	}
 
 	public ClienteDTO(Long id, String nome, String email, String senha, String documento) {
-		this.id = id;
+		super(id);
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.documento = documento;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNome() {
@@ -78,6 +69,28 @@ public class ClienteDTO {
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(documento, email, this.getId(), nome, senha);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClienteDTO other = (ClienteDTO) obj;
+		return Objects.equals(documento, other.documento) && Objects.equals(email, other.email)
+				&& Objects.equals(super.getId(), other.getId()) && Objects.equals(nome, other.nome)
+				&& Objects.equals(senha, other.senha);
 	}
 
 }

@@ -22,7 +22,7 @@ import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
 import com.gft.desafioapi.repository.filter.ClienteFilter;
 import com.gft.desafioapi.utils.Constants;
-import com.gft.desafioapi.utils.EntityUtils;
+import com.gft.desafioapi.utils.ApiUtils;
 
 @Service
 public class ClienteService implements UserDetailsService {
@@ -45,7 +45,7 @@ public class ClienteService implements UserDetailsService {
 
 	public Cliente create(Cliente cliente) {
 
-		EntityUtils.setIdNull(cliente);
+		ApiUtils.setIdNull(cliente);
 
 		if (Objects.isNull(cliente.getDataCadastro())) {
 			cliente.setDataCadastro(LocalDate.now());

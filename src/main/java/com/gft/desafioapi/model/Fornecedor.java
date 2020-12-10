@@ -1,6 +1,7 @@
 package com.gft.desafioapi.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -9,7 +10,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 
 import com.gft.desafioapi.utils.Coalesce;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 @Entity
 public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 
@@ -71,6 +72,27 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 		List<Produto> produtos = coalesce(this.getProdutos(), other.getProdutos());
 
 		return new Fornecedor(id, nome, cnpj, produtos);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(cnpj, nome, produtos);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Fornecedor other = (Fornecedor) obj;
+		return Objects.equals(cnpj, other.cnpj) && Objects.equals(nome, other.nome)
+				&& Objects.equals(produtos, other.produtos);
 	}
 
 }

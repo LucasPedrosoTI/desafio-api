@@ -1,6 +1,7 @@
 package com.gft.desafioapi.dto;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -10,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gft.desafioapi.model.CategoriaEnum;
@@ -19,10 +22,8 @@ import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerialize
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class ProdutoDTO {
-
-	@ApiModelProperty(example = "1", allowEmptyValue = true, required = false, position = -1)
-	private Long id;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class ProdutoDTO extends AbstractDTO {
 
 	@ApiModelProperty(example = "Redmi Note 9", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -66,7 +67,7 @@ public class ProdutoDTO {
 	private Fornecedor fornecedor;
 
 	private ProdutoDTO(Builder builder) {
-		this.id = builder.id;
+		super(builder.id);
 		this.nome = builder.nome;
 		this.codigoProduto = builder.codigoProduto;
 		this.valor = builder.valor;
@@ -79,16 +80,6 @@ public class ProdutoDTO {
 	}
 
 	public ProdutoDTO() {
-	}
-
-
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNome() {
@@ -167,6 +158,31 @@ public class ProdutoDTO {
 
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(categoria, codigoProduto, fornecedor, imagem, nome, promocao, quantidade,
+				valor, valorPromo);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoDTO other = (ProdutoDTO) obj;
+		return categoria == other.categoria && Objects.equals(codigoProduto, other.codigoProduto)
+				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(imagem, other.imagem)
+				&& Objects.equals(nome, other.nome) && Objects.equals(promocao, other.promocao)
+				&& Objects.equals(quantidade, other.quantidade) && Objects.equals(valor, other.valor)
+				&& Objects.equals(valorPromo, other.valorPromo);
 	}
 
 	/**

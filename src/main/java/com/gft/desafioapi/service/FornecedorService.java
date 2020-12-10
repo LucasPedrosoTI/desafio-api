@@ -16,7 +16,7 @@ import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
 import com.gft.desafioapi.repository.filter.FornecedorFilter;
 import com.gft.desafioapi.utils.Constants;
-import com.gft.desafioapi.utils.EntityUtils;
+import com.gft.desafioapi.utils.ApiUtils;
 
 @Service
 public class FornecedorService {
@@ -54,7 +54,7 @@ public class FornecedorService {
 	}
 
 	public Fornecedor create(@Valid Fornecedor fornecedor) {
-		EntityUtils.setIdNull(fornecedor);
+		ApiUtils.setIdNull(fornecedor);
 
 		return fornecedorRepository.save(fornecedor);
 	}

@@ -1,5 +1,8 @@
 package com.gft.desafioapi.resource;
 
+import static com.gft.desafioapi.utils.ApiUtils.createRelListAllLink;
+import static com.gft.desafioapi.utils.ApiUtils.createSelfLink;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,28 +54,30 @@ public class VendaResource {
 	@Autowired
 	ApplicationEventPublisher publisher;
 
+	Class<VendaResource> resource = VendaResource.class;
+
 	@Cacheable(value = "custom-cache", key = "'VendasInCache'+#filter")
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
-	public Page<VendaDTO> listarVendas(VendaFilter filter, Pageable pageable) {
-		return converter.entityToDto(vendaService.findAllWithFilter(filter, pageable));
+	public Page<Object> listarVendas(VendaFilter filter, Pageable pageable) {
+		return createSelfLink(converter.entityToDto(vendaService.findAllWithFilter(filter, pageable)), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna uma venda por ID")
 	@GetMapping("/{id}")
-	public VendaDTO encontrarVendaPorId(@PathVariable Long id) {
-		return converter.entityToDto(vendaService.findVendaById(id));
+	public Object encontrarVendaPorId(@PathVariable Long id) {
+		return createRelListAllLink(converter.entityToDto(vendaService.findVendaById(id)), resource);
 	}
 
 	@ApiOperation("Cadastra uma nova venda")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public VendaDTO criarVenda(@RequestBody @Valid VendaDTO dto, HttpServletResponse response) {
+	public Object criarVenda(@RequestBody @Valid VendaDTO dto, HttpServletResponse response) {
 		Venda vendaCriada = vendaService.create(converter.dtoToEntity(dto));
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaCriada.getId()));
-		return converter.entityToDto(vendaCriada);
+		return createSelfLink(converter.entityToDto(vendaCriada), resource);
 	}
 
 	@ApiOperation("Atualiza os dados de uma venda por ID")

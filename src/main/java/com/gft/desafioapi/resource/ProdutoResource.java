@@ -1,5 +1,8 @@
 package com.gft.desafioapi.resource;
 
+import static com.gft.desafioapi.utils.ApiUtils.createRelListAllLink;
+import static com.gft.desafioapi.utils.ApiUtils.createSelfLink;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -56,37 +59,42 @@ public class ProdutoResource {
 	@Autowired
 	ApplicationEventPublisher publisher;
 
+	Class<ProdutoResource> resource = ProdutoResource.class;
+
 	@Cacheable(value = "custom-cache", key = "'ProdutosInCache'+#filter")
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
-	public Page<ProdutoDTO> listarProdutos(
+	public Page<Object> listarProdutos(
 			ProdutoFilter filter,
 			Pageable pageable) {
-		return converter.entityToDto(produtoService.pesquisarProdutos(filter, pageable));
+		return createSelfLink(converter.entityToDto(produtoService.pesquisarProdutos(filter, pageable)), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um produto por ID")
 	@GetMapping("/{id}")
-	public ProdutoDTO encontrarProdutoPorId(@PathVariable Long id) throws InterruptedException {
-		return converter.entityToDto(produtoService.findProdutoById(id));
+	public Object encontrarProdutoPorId(@PathVariable Long id) {
+		return createRelListAllLink(converter.entityToDto(produtoService.findProdutoById(id)), resource);
 	}
 
 	@ApiOperation("Cadastra um novo produto")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ProdutoDTO criarProduto(
+	public Object criarProduto(
 			@RequestBody @Valid ProdutoDTO dto,
 			HttpServletResponse response) {
+
 		Produto produtoSalvo = produtoService.create(converter.dtoToEntity(dto));
+
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, produtoSalvo.getId()));
-		return converter.entityToDto(produtoSalvo);
+
+		return createSelfLink(converter.entityToDto(produtoSalvo), resource);
 	}
 
 	@ApiOperation("Atualiza os dados de um produto por ID")
 	@PutMapping("/{id}")
-	public ProdutoDTO atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO dto) throws InterruptedException {
+	public ProdutoDTO atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO dto) {
 
 		Produto produto = produtoService.update(id, converter.dtoToEntity(dto));
 
@@ -102,28 +110,31 @@ public class ProdutoResource {
 
 	@ApiOperation("Lista os produtos em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<ProdutoDTO> listarProdutosAsc(Pageable pageable) {
-		return converter.entityToDto(produtoRepository.findAllOrderByNomeAsc(pageable));
+	public Page<Object> listarProdutosAsc(Pageable pageable) {
+		return createSelfLink(converter.entityToDto(produtoRepository.findAllOrderByNomeAsc(pageable)), resource);
 	}
 
 	@ApiOperation("Lista os produtos em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<ProdutoDTO> listarProdutosDesc(Pageable pageable) {
-		return converter.entityToDto(produtoRepository.findAllOrderByNomeDesc(pageable));
+	public Page<Object> listarProdutosDesc(Pageable pageable) {
+		return createSelfLink(converter.entityToDto(produtoRepository.findAllOrderByNomeDesc(pageable)), resource);
 	}
 
 	@ApiOperation("Busca produtos por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<ProdutoDTO> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
-		return converter.entityToDto(produtoRepository.findByNomeContaining(nome, pageable));
+	public Page<Object> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
+		return createSelfLink(converter.entityToDto(produtoRepository.findByNomeContaining(nome, pageable)), resource);
 	}
 
 	@ApiOperation("Faz o upload de uma imagem")
 	@PutMapping(path = "/{id}/imagem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Object> uploadImagem(@RequestPart MultipartFile imagem, @PathVariable Long id)
-			throws IOException, InterruptedException {
+			throws IOException {
 		try {
-			return ResponseEntity.ok(converter.entityToDto(produtoService.salvarImagem(imagem, id)));
+
+			ProdutoDTO dto = converter.entityToDto(produtoService.salvarImagem(imagem, id));
+
+			return ResponseEntity.ok(createSelfLink(dto, resource));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(Map.of("mensagemUsuario", "Operação não permitida", "mensagemDev",

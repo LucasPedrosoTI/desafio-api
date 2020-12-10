@@ -18,18 +18,18 @@ import com.gft.desafioapi.repository.ProdutoRepository;
 import com.gft.desafioapi.utils.Constants;
 
 @Component
-public class CustomVendaProdutoDeserializer extends StdDeserializer<List<Produto>> {
+public class CustomProdutosDeserializer extends StdDeserializer<List<Produto>> {
 
 	@Autowired
 	ProdutoRepository produtoRepository;
 
 	private static final long serialVersionUID = -839983745171929649L;
 
-	public CustomVendaProdutoDeserializer() {
+	public CustomProdutosDeserializer() {
 		this(null);
 	}
 
-	public CustomVendaProdutoDeserializer(Class<?> vc) {
+	public CustomProdutosDeserializer(Class<?> vc) {
 		super(vc);
 	}
 

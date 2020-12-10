@@ -16,7 +16,8 @@ public class CustomProdutoFornecedorSerializer extends StdSerializer<Fornecedor>
 		this(null);
 	}
 
-	public CustomProdutoFornecedorSerializer(Class<Fornecedor> t) {
+	public CustomProdutoFornecedorSerializer(
+			Class<Fornecedor> t) {
 		super(t);
 	}
 

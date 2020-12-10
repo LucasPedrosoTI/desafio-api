@@ -3,6 +3,7 @@ package com.gft.desafioapi.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -15,15 +16,13 @@ import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
+import com.gft.desafioapi.repository.serializer.CustomProdutosDeserializer;
+import com.gft.desafioapi.repository.serializer.CustomProdutosSerializer;
 import com.gft.desafioapi.repository.serializer.CustomVendaClienteSerializer;
-import com.gft.desafioapi.repository.serializer.CustomVendaProdutoDeserializer;
-import com.gft.desafioapi.repository.serializer.CustomVendaProdutoSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class VendaDTO {
-
-	private Long id;
+public class VendaDTO extends AbstractDTO {
 
 	@ApiModelProperty(hidden = true)
 	@DecimalMin(value = "0")
@@ -45,8 +44,8 @@ public class VendaDTO {
 	private Fornecedor fornecedor;
 
 	@ApiModelProperty(allowEmptyValue = false, required = true, value = "ID dos produtos")
-	@JsonSerialize(using = CustomVendaProdutoSerializer.class)
-	@JsonDeserialize(using = CustomVendaProdutoDeserializer.class)
+	@JsonSerialize(using = CustomProdutosSerializer.class)
+	@JsonDeserialize(using = CustomProdutosDeserializer.class)
 	private List<Produto> produtos;
 
 	public VendaDTO() {}
@@ -58,20 +57,12 @@ public class VendaDTO {
 			Cliente cliente,
 			Fornecedor fornecedor,
 			List<Produto> produtos) {
-		this.id = id;
+		super(id);
 		this.totalCompra = totalCompra;
 		this.dataCompra = dataCompra;
 		this.cliente = cliente;
 		this.fornecedor = fornecedor;
 		this.produtos = produtos;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public BigDecimal getTotalCompra() {
@@ -114,5 +105,26 @@ public class VendaDTO {
 		this.produtos = produtos;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(cliente, dataCompra, fornecedor, produtos, totalCompra);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VendaDTO other = (VendaDTO) obj;
+		return Objects.equals(cliente, other.cliente) && Objects.equals(dataCompra, other.dataCompra)
+				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(produtos, other.produtos)
+				&& Objects.equals(totalCompra, other.totalCompra);
+	}
 
 }

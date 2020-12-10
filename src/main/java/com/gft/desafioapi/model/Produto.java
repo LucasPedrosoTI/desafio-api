@@ -9,11 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorDeserializer;
+import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
 import com.gft.desafioapi.utils.Coalesce;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
@@ -36,6 +37,8 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	private Long quantidade;
 
+	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
+	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;

@@ -1,5 +1,8 @@
 package com.gft.desafioapi.resource;
 
+import static com.gft.desafioapi.utils.ApiUtils.createRelListAllLink;
+import static com.gft.desafioapi.utils.ApiUtils.createSelfLink;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,35 +54,37 @@ public class ClienteResource {
 	@Autowired
 	ApplicationEventPublisher publisher;
 
+	Class<ClienteResource> resource = ClienteResource.class;
+
 	@Cacheable(value = "custom-cache", key = "'ClientesInCache'+#filter")
 	@ApiOperation("Lista todos os clientes")
 	@GetMapping
-	public Page<ClienteDTO> listarClientes(ClienteFilter filter, Pageable pageable) {
+	public Page<Object> listarClientes(ClienteFilter filter, Pageable pageable) {
 
 		Page<Cliente> clientes = clienteService.pesquisarClientes(filter, pageable);
 
-		return converter.entityToDto(clientes);
+		return createSelfLink(converter.entityToDto(clientes), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'ClienteInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'ClienteInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um cliente por ID")
 	@GetMapping("/{id}")
-	public ClienteDTO encontrarClientePorId(@PathVariable Long id) {
+	public Object encontrarClientePorId(@PathVariable Long id) {
 		Cliente cliente = clienteService.findClienteById(id);
-		return converter.entityToDto(cliente);
+		return createRelListAllLink(converter.entityToDto(cliente), resource);
 	}
 
 	@ApiOperation("Cadastra um novo cliente")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ClienteDTO criarCliente(@RequestBody @Valid ClienteDTO dto, HttpServletResponse response) {
+	public Object criarCliente(@RequestBody @Valid ClienteDTO dto, HttpServletResponse response) {
 
 		Cliente cliente = clienteService.create(converter.dtoToEntity(dto));
 
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, cliente.getId()));
 
-		return converter.entityToDto(cliente);
+		return createSelfLink(converter.entityToDto(cliente), resource);
 	}
 
 	@ApiOperation("Atualiza os dados de um cliente por ID")
@@ -99,21 +104,22 @@ public class ClienteResource {
 
 	@ApiOperation("Lista os clientes em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<ClienteDTO> listarClientesAsc(Pageable pageable) {
+	public Page<Object> listarClientesAsc(Pageable pageable) {
 
-		return converter.entityToDto(clienteRepository.findAllOrderByNomeAsc(pageable));
+		return createSelfLink(converter.entityToDto(clienteRepository.findAllOrderByNomeAsc(pageable)), resource);
 	}
 
 	@ApiOperation("Lista os clientes em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<ClienteDTO> listarClientesDesc(Pageable pageable) {
-		return converter.entityToDto(clienteRepository.findAllOrderByNomeDesc(pageable));
+	public Page<Object> listarClientesDesc(Pageable pageable) {
+		return createSelfLink(converter.entityToDto(clienteRepository.findAllOrderByNomeDesc(pageable)), resource);
 	}
 
 	@ApiOperation("Busca clientes por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<ClienteDTO> encontrarClientesPorNome(@PathVariable String nome, Pageable pageable) {
-		return converter.entityToDto(clienteRepository.findByNomeContaining(nome, pageable));
+	public Page<Object> encontrarClientesPorNome(@PathVariable String nome, Pageable pageable) {
+		return createSelfLink(converter.entityToDto(clienteRepository.findByNomeContaining(nome, pageable)), resource);
 	}
+
 
 }

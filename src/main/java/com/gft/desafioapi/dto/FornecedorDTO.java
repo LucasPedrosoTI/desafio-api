@@ -1,20 +1,24 @@
 package com.gft.desafioapi.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gft.desafioapi.model.Produto;
+import com.gft.desafioapi.repository.serializer.CustomProdutosSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class FornecedorDTO {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class FornecedorDTO extends AbstractDTO {
 
-	@ApiModelProperty(example = "1", allowEmptyValue = true, required = false, position = -1)
-	private Long id;
 
 	@ApiModelProperty(example = "Apple", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -27,24 +31,17 @@ public class FornecedorDTO {
 	private String cnpj;
 
 	@ApiModelProperty(hidden = true)
+	@JsonSerialize(using = CustomProdutosSerializer.class)
 	private List<Produto> produtos;
 
 	public FornecedorDTO() {
 	}
 
 	public FornecedorDTO(Long id, String nome, String cnpj, List<Produto> produtos) {
-		this.id = id;
+		super(id);
 		this.nome = nome;
 		this.cnpj = cnpj;
 		this.produtos = produtos;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNome() {
@@ -69,6 +66,27 @@ public class FornecedorDTO {
 
 	public void setProdutos(List<Produto> produtos) {
 		this.produtos = produtos;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(cnpj, nome, produtos);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FornecedorDTO other = (FornecedorDTO) obj;
+		return Objects.equals(cnpj, other.cnpj) && Objects.equals(nome, other.nome)
+				&& Objects.equals(produtos, other.produtos);
 	}
 
 }
