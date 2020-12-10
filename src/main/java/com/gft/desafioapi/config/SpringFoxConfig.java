@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +33,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SpringFoxConfig implements WebMvcConfigurer {
 
-	private String accessTokenUri = "http://localhost:8080/oauth/token";
+	@Value("${app.host}")
+	private String host;
 
 	@Bean
 	public Docket api() {
@@ -54,7 +56,7 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 		authorizationScopeList.add(new AuthorizationScope("read", "read all"));
 
 		List<GrantType> grantTypes = new ArrayList<>();
-		GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(accessTokenUri);
+		GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(host + "/oauth/token");
 
 		grantTypes.add(passwordCredentialsGrant);
 
