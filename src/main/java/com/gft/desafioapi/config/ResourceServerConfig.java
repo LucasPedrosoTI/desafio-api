@@ -3,6 +3,7 @@ package com.gft.desafioapi.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,7 +26,9 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	ClienteService clienteService;
 
+
 	@Autowired
+	@Lazy
 	BCryptPasswordEncoder passwordEncoder;
 
 	public static final String[] AUTH_WHITELIST = { "/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**",
@@ -50,7 +53,7 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll().anyRequest().authenticated().and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 	}
 
 	@Override
