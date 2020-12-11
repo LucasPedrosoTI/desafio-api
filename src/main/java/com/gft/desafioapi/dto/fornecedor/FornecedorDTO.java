@@ -1,4 +1,4 @@
-package com.gft.desafioapi.dto;
+package com.gft.desafioapi.dto.fornecedor;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.dto.AbstractDTO;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.serializer.CustomProdutosSerializer;
 

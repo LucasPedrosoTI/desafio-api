@@ -1,10 +1,12 @@
-package com.gft.desafioapi.dto;
+package com.gft.desafioapi.dto.cliente;
 
 import java.util.Objects;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.gft.desafioapi.dto.AbstractDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 

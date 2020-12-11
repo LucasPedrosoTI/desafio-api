@@ -1,4 +1,4 @@
-package com.gft.desafioapi.dto;
+package com.gft.desafioapi.dto.venda;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ import com.gft.desafioapi.repository.serializer.CustomVendaClienteSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class VendaDTO extends AbstractDTO {
+public class VendaDTORequest {
 
 	@ApiModelProperty(hidden = true)
 	@DecimalMin(value = "0")
@@ -48,16 +48,16 @@ public class VendaDTO extends AbstractDTO {
 	@JsonDeserialize(using = CustomProdutosDeserializer.class)
 	private List<Produto> produtos;
 
-	public VendaDTO() {}
+	public VendaDTORequest() {}
 
-	public VendaDTO(
-			Long id,
+	public VendaDTORequest(
+
 			BigDecimal totalCompra,
 			LocalDate dataCompra,
 			Cliente cliente,
 			Fornecedor fornecedor,
 			List<Produto> produtos) {
-		super(id);
+
 		this.totalCompra = totalCompra;
 		this.dataCompra = dataCompra;
 		this.cliente = cliente;
@@ -121,7 +121,7 @@ public class VendaDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		VendaDTO other = (VendaDTO) obj;
+		VendaDTORequest other = (VendaDTORequest) obj;
 		return Objects.equals(cliente, other.cliente) && Objects.equals(dataCompra, other.dataCompra)
 				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(produtos, other.produtos)
 				&& Objects.equals(totalCompra, other.totalCompra);

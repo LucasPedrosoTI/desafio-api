@@ -1,4 +1,4 @@
-package com.gft.desafioapi.dto;
+package com.gft.desafioapi.dto.produto;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -11,8 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gft.desafioapi.model.CategoriaEnum;
@@ -22,8 +20,7 @@ import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerialize
 
 import io.swagger.annotations.ApiModelProperty;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class ProdutoDTO extends AbstractDTO {
+public class ProdutoDTORequest {
 
 	@ApiModelProperty(example = "Redmi Note 9", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -66,8 +63,7 @@ public class ProdutoDTO extends AbstractDTO {
 	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
 	private Fornecedor fornecedor;
 
-	private ProdutoDTO(Builder builder) {
-		super(builder.id);
+	private ProdutoDTORequest(Builder builder) {
 		this.nome = builder.nome;
 		this.codigoProduto = builder.codigoProduto;
 		this.valor = builder.valor;
@@ -79,7 +75,7 @@ public class ProdutoDTO extends AbstractDTO {
 		this.fornecedor = builder.fornecedor;
 	}
 
-	public ProdutoDTO() {
+	public ProdutoDTORequest() {
 	}
 
 	public String getNome() {
@@ -177,7 +173,7 @@ public class ProdutoDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProdutoDTO other = (ProdutoDTO) obj;
+		ProdutoDTORequest other = (ProdutoDTORequest) obj;
 		return categoria == other.categoria && Objects.equals(codigoProduto, other.codigoProduto)
 				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(imagem, other.imagem)
 				&& Objects.equals(nome, other.nome) && Objects.equals(promocao, other.promocao)
@@ -186,7 +182,7 @@ public class ProdutoDTO extends AbstractDTO {
 	}
 
 	/**
-	 * Creates builder to build {@link ProdutoDTO}.
+	 * Creates builder to build {@link ProdutoDTORequest}.
 	 * 
 	 * @return created builder
 	 */
@@ -195,10 +191,9 @@ public class ProdutoDTO extends AbstractDTO {
 	}
 
 	/**
-	 * Builder to build {@link ProdutoDTO}.
+	 * Builder to build {@link ProdutoDTORequest}.
 	 */
 	public static final class Builder {
-		private Long id;
 		private String nome;
 		private String codigoProduto;
 		private BigDecimal valor;
@@ -210,11 +205,6 @@ public class ProdutoDTO extends AbstractDTO {
 		private Fornecedor fornecedor;
 
 		private Builder() {
-		}
-
-		public Builder withId(Long id) {
-			this.id = id;
-			return this;
 		}
 
 		public Builder withNome(String nome) {
@@ -262,8 +252,8 @@ public class ProdutoDTO extends AbstractDTO {
 			return this;
 		}
 
-		public ProdutoDTO build() {
-			return new ProdutoDTO(this);
+		public ProdutoDTORequest build() {
+			return new ProdutoDTORequest(this);
 		}
 	}
 

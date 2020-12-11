@@ -32,7 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gft.desafioapi.converter.ProdutoConverter;
-import com.gft.desafioapi.dto.ProdutoDTO;
+import com.gft.desafioapi.dto.produto.ProdutoDTO;
+import com.gft.desafioapi.dto.produto.ProdutoDTORequest;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
@@ -64,7 +65,7 @@ public class ProdutoResource {
 	@Cacheable(value = "custom-cache", key = "'ProdutosInCache'+#filter")
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
-	public Page<Object> listarProdutos(
+	public Page<ProdutoDTO> listarProdutos(
 			ProdutoFilter filter,
 			Pageable pageable) {
 		return createSelfLink(converter.entityToDto(produtoService.pesquisarProdutos(filter, pageable)), resource);
@@ -74,15 +75,15 @@ public class ProdutoResource {
 	@Cacheable(value = "custom-cache", key = "'ProdutoInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um produto por ID")
 	@GetMapping("/{id}")
-	public Object encontrarProdutoPorId(@PathVariable Long id) {
+	public ProdutoDTO encontrarProdutoPorId(@PathVariable Long id) {
 		return createRelListAllLink(converter.entityToDto(produtoService.findProdutoById(id)), resource);
 	}
 
 	@ApiOperation("Cadastra um novo produto")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Object criarProduto(
-			@RequestBody @Valid ProdutoDTO dto,
+	public ProdutoDTO criarProduto(
+			@RequestBody @Valid ProdutoDTORequest dto,
 			HttpServletResponse response) {
 
 		Produto produtoSalvo = produtoService.create(converter.dtoToEntity(dto));
@@ -94,7 +95,7 @@ public class ProdutoResource {
 
 	@ApiOperation("Atualiza os dados de um produto por ID")
 	@PutMapping("/{id}")
-	public ProdutoDTO atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO dto) {
+	public ProdutoDTO atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTORequest dto) {
 
 		Produto produto = produtoService.update(id, converter.dtoToEntity(dto));
 
@@ -110,19 +111,19 @@ public class ProdutoResource {
 
 	@ApiOperation("Lista os produtos em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<Object> listarProdutosAsc(Pageable pageable) {
+	public Page<ProdutoDTO> listarProdutosAsc(Pageable pageable) {
 		return createSelfLink(converter.entityToDto(produtoRepository.findAllOrderByNomeAsc(pageable)), resource);
 	}
 
 	@ApiOperation("Lista os produtos em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<Object> listarProdutosDesc(Pageable pageable) {
+	public Page<ProdutoDTO> listarProdutosDesc(Pageable pageable) {
 		return createSelfLink(converter.entityToDto(produtoRepository.findAllOrderByNomeDesc(pageable)), resource);
 	}
 
 	@ApiOperation("Busca produtos por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<Object> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
+	public Page<ProdutoDTO> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
 		return createSelfLink(converter.entityToDto(produtoRepository.findByNomeContaining(nome, pageable)), resource);
 	}
 

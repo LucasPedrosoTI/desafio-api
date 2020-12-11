@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.gft.desafioapi.dto.VendaDTO;
+import com.gft.desafioapi.dto.venda.VendaDTO;
+import com.gft.desafioapi.dto.venda.VendaDTORequest;
 import com.gft.desafioapi.model.Venda;
 
 @Component
@@ -31,6 +32,19 @@ public class VendaConverter {
 	public Venda dtoToEntity(VendaDTO dto) {
 		return new Venda(dto.getId(), dto.getTotalCompra(), dto.getDataCompra(), dto.getCliente(),
 				dto.getFornecedor(), dto.getProdutos());
+	}
+
+	public Venda dtoToEntity(VendaDTORequest dto) {
+
+		Venda venda = new Venda();
+
+		venda.setDataCompra(dto.getDataCompra());
+		venda.setTotalCompra(dto.getTotalCompra());
+		venda.setCliente(dto.getCliente());
+		venda.setFornecedor(dto.getFornecedor());
+		venda.setProdutos(dto.getProdutos());
+
+		return venda;
 	}
 
 	public List<Venda> dtoToEntity(List<VendaDTO> dtos) {

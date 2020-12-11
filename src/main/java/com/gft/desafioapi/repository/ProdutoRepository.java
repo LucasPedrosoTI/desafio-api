@@ -21,8 +21,10 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
 	//@formatter:off
 	@Query(
-			"select p from Produto p where " + "p.nome like %?1% and p.codigoProduto like %?2% and "
-					+ "(p.valor BETWEEN ?3 and ?4) and " + "(p.quantidade BETWEEN ?5 and ?6) and "
+			"select p from Produto p where "
+					+ "p.nome like %?1% and p.codigoProduto like %?2% and "
+					+ "(p.valor BETWEEN ?3 and ?4) and "
+					+ "(p.quantidade BETWEEN ?5 and ?6) and "
 					+ "(p.valorPromo IS NULL OR (p.valorPromo BETWEEN ?7 AND ?8))"
 			)
 	//@formatter:on

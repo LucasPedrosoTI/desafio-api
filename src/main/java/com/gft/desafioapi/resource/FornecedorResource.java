@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.converter.FornecedorConverter;
-import com.gft.desafioapi.dto.FornecedorDTO;
+import com.gft.desafioapi.dto.fornecedor.FornecedorDTO;
+import com.gft.desafioapi.dto.fornecedor.FornecedorDTORequest;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
@@ -59,7 +60,7 @@ public class FornecedorResource {
 	@Cacheable(value = "custom-cache", key = "'FornecedoresInCache'+#filter")
 	@ApiOperation("Lista todos os fornecedores")
 	@GetMapping
-	public Page<Object> listarFornecedores(FornecedorFilter filter, Pageable pageable) {
+	public Page<FornecedorDTO> listarFornecedores(FornecedorFilter filter, Pageable pageable) {
 		return createSelfLink(converter.entityToDto(fornecedorService.findAllWithFilter(filter, pageable)), resource);
 	}
 
@@ -67,25 +68,25 @@ public class FornecedorResource {
 	@Cacheable(value = "custom-cache", key = "'FornecedorInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um fornecedor por ID")
 	@GetMapping("/{id}")
-	public Object encontrarFornecedorPorId(@PathVariable Long id) {
+	public FornecedorDTO encontrarFornecedorPorId(@PathVariable Long id) {
 		return createRelListAllLink(converter.entityToDto(fornecedorService.findFornecedorById(id)), resource);
 	}
 
 	@ApiOperation("Cadastra um novo fornecedor")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public FornecedorDTO criarFornecedor(@RequestBody @Valid FornecedorDTO dto, HttpServletResponse response) {
+	public FornecedorDTO criarFornecedor(@RequestBody @Valid FornecedorDTORequest dto, HttpServletResponse response) {
 
 		Fornecedor fornecedor = fornecedorService.create(converter.dtoToEntity(dto));
 
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, fornecedor.getId()));
 
-		return converter.entityToDto(fornecedor);
+		return createSelfLink(converter.entityToDto(fornecedor), resource);
 	}
 
 	@ApiOperation("Atualiza os dados de um fornecedor por ID")
 	@PutMapping("/{id}")
-	public Object atualizarFornecedor(@PathVariable Long id, @RequestBody FornecedorDTO dto) {
+	public FornecedorDTO atualizarFornecedor(@PathVariable Long id, @RequestBody FornecedorDTORequest dto) {
 
 		Fornecedor fornecedor = fornecedorService.update(id, converter.dtoToEntity(dto));
 
@@ -101,19 +102,19 @@ public class FornecedorResource {
 
 	@ApiOperation("Lista os fornecedores em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<Object> listarFornecedoresAsc(Pageable pageable) {
+	public Page<FornecedorDTO> listarFornecedoresAsc(Pageable pageable) {
 		return createSelfLink(converter.entityToDto(fornecedorRepository.findAllOrderByNomeAsc(pageable)), resource);
 	}
 
 	@ApiOperation("Lista os fornecedores em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<Object> listarFornecedoresDesc(Pageable pageable) {
+	public Page<FornecedorDTO> listarFornecedoresDesc(Pageable pageable) {
 		return createSelfLink(converter.entityToDto(fornecedorRepository.findAllOrderByNomeDesc(pageable)), resource);
 	}
 
 	@ApiOperation("Busca fornecedores por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<Object> encontrarFornecedoresPorNome(@PathVariable String nome, Pageable pageable) {
+	public Page<FornecedorDTO> encontrarFornecedoresPorNome(@PathVariable String nome, Pageable pageable) {
 		return createSelfLink(converter.entityToDto(fornecedorRepository.findByNomeContaining(nome, pageable)),
 				resource);
 	}

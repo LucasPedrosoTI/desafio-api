@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.converter.VendaConverter;
-import com.gft.desafioapi.dto.VendaDTO;
+import com.gft.desafioapi.dto.venda.VendaDTO;
+import com.gft.desafioapi.dto.venda.VendaDTORequest;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
@@ -59,7 +60,7 @@ public class VendaResource {
 	@Cacheable(value = "custom-cache", key = "'VendasInCache'+#filter")
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
-	public Page<Object> listarVendas(VendaFilter filter, Pageable pageable) {
+	public Page<VendaDTO> listarVendas(VendaFilter filter, Pageable pageable) {
 		return createSelfLink(converter.entityToDto(vendaService.findAllWithFilter(filter, pageable)), resource);
 	}
 
@@ -67,14 +68,14 @@ public class VendaResource {
 	@Cacheable(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna uma venda por ID")
 	@GetMapping("/{id}")
-	public Object encontrarVendaPorId(@PathVariable Long id) {
+	public VendaDTO encontrarVendaPorId(@PathVariable Long id) {
 		return createRelListAllLink(converter.entityToDto(vendaService.findVendaById(id)), resource);
 	}
 
 	@ApiOperation("Cadastra uma nova venda")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public Object criarVenda(@RequestBody @Valid VendaDTO dto, HttpServletResponse response) {
+	public VendaDTO criarVenda(@RequestBody @Valid VendaDTORequest dto, HttpServletResponse response) {
 		Venda vendaCriada = vendaService.create(converter.dtoToEntity(dto));
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaCriada.getId()));
 		return createSelfLink(converter.entityToDto(vendaCriada), resource);
@@ -82,7 +83,7 @@ public class VendaResource {
 
 	@ApiOperation("Atualiza os dados de uma venda por ID")
 	@PutMapping("/{id}")
-	public VendaDTO atualizarVenda(@PathVariable Long id, @RequestBody VendaDTO dto) {
+	public VendaDTO atualizarVenda(@PathVariable Long id, @RequestBody VendaDTORequest dto) {
 
 		Venda venda = vendaService.update(id, converter.dtoToEntity(dto));
 

@@ -3,11 +3,11 @@ package com.gft.desafioapi.converter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.gft.desafioapi.dto.FornecedorDTO;
+import com.gft.desafioapi.dto.fornecedor.FornecedorDTO;
+import com.gft.desafioapi.dto.fornecedor.FornecedorDTORequest;
 import com.gft.desafioapi.model.Fornecedor;
 
 @Component
@@ -29,7 +29,17 @@ public class FornecedorConverter {
 	public Fornecedor dtoToEntity(FornecedorDTO dto) {
 		Fornecedor fornecedor = new Fornecedor();
 
-		BeanUtils.copyProperties(dto, fornecedor);
+		fornecedor.setNome(dto.getNome());
+		fornecedor.setCnpj(dto.getCnpj());
+
+		return fornecedor;
+	}
+
+	public Fornecedor dtoToEntity(FornecedorDTORequest dto) {
+		Fornecedor fornecedor = new Fornecedor();
+
+		fornecedor.setNome(dto.getNome());
+		fornecedor.setCnpj(dto.getCnpj());
 
 		return fornecedor;
 	}

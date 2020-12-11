@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.gft.desafioapi.dto.ProdutoDTO;
+import com.gft.desafioapi.dto.produto.ProdutoDTO;
+import com.gft.desafioapi.dto.produto.ProdutoDTORequest;
 import com.gft.desafioapi.model.Produto;
 
 @Component
@@ -39,6 +40,20 @@ public class ProdutoConverter {
 	public Produto dtoToEntity(ProdutoDTO dto) {
 		return Produto.builder()
 				.withId(dto.getId())
+				.withNome(dto.getNome())
+				.withValor(dto.getValor())
+				.withPromocao(dto.isPromocao())
+				.withValorPromo(dto.getValorPromo())
+				.withImagem(dto.getImagem())
+				.withCategoria(dto.getCategoria())
+				.withCodigoProduto(dto.getCodigoProduto())
+				.withQuantidade(dto.getQuantidade())
+				.withFornecedor(dto.getFornecedor())
+				.build();
+	}
+
+	public Produto dtoToEntity(ProdutoDTORequest dto) {
+		return Produto.builder()
 				.withNome(dto.getNome())
 				.withValor(dto.getValor())
 				.withPromocao(dto.isPromocao())
