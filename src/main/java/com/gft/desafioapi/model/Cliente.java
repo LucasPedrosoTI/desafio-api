@@ -42,6 +42,11 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 		this.dataCadastro = dataCadastro;
 	}
 
+	public Cliente(
+			Long id) {
+		super(id);
+	}
+
 	public String getNome() {
 		return this.nome;
 	}

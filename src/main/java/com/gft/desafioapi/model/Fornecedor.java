@@ -35,6 +35,11 @@ public class Fornecedor extends AbstractEntity implements Coalesce<Fornecedor> {
 		this.produtos = produtos;
 	}
 
+	public Fornecedor(
+			Long id) {
+		super(id);
+	}
+
 	public String getNome() {
 		return this.nome;
 	}

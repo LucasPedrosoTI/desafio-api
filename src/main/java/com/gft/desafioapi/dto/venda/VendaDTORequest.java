@@ -1,76 +1,52 @@
 package com.gft.desafioapi.dto.venda;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gft.desafioapi.model.Cliente;
-import com.gft.desafioapi.model.Fornecedor;
-import com.gft.desafioapi.model.Produto;
-import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
+import com.gft.desafioapi.dto.AbstractDtoId;
 import com.gft.desafioapi.repository.serializer.CustomProdutosDeserializer;
-import com.gft.desafioapi.repository.serializer.CustomProdutosSerializer;
-import com.gft.desafioapi.repository.serializer.CustomVendaClienteSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
 public class VendaDTORequest {
 
-	@ApiModelProperty(hidden = true)
-	@DecimalMin(value = "0")
-	@DecimalMax(value = "9999999")
-	private BigDecimal totalCompra;
-
-	@ApiModelProperty(required = true, allowEmptyValue = false, example = "03/12/2020", value = "Data da compra")
+	@ApiModelProperty(required = true, allowEmptyValue = false, example = "03/12/2020", value = "Data da compra",
+			position = -1)
 	@NotNull
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCompra;
 
+	@NotNull
 	@ApiModelProperty(allowEmptyValue = false, required = true, value = "ID do cliente")
-	@JsonSerialize(using = CustomVendaClienteSerializer.class)
-	private Cliente cliente;
+	private AbstractDtoId cliente;
 
 	@ApiModelProperty(allowEmptyValue = false, required = true, value = "ID do fornecedor")
-	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
 	@NotNull
-	private Fornecedor fornecedor;
+	private AbstractDtoId fornecedor;
 
+	@NotNull
 	@ApiModelProperty(allowEmptyValue = false, required = true, value = "ID dos produtos")
-	@JsonSerialize(using = CustomProdutosSerializer.class)
 	@JsonDeserialize(using = CustomProdutosDeserializer.class)
-	private List<Produto> produtos;
+	private List<AbstractDtoId> produtos;
 
 	public VendaDTORequest() {}
 
 	public VendaDTORequest(
 
-			BigDecimal totalCompra,
 			LocalDate dataCompra,
-			Cliente cliente,
-			Fornecedor fornecedor,
-			List<Produto> produtos) {
+			AbstractDtoId cliente,
+			AbstractDtoId fornecedor,
+			List<AbstractDtoId> produtos) {
 
-		this.totalCompra = totalCompra;
 		this.dataCompra = dataCompra;
 		this.cliente = cliente;
 		this.fornecedor = fornecedor;
 		this.produtos = produtos;
-	}
-
-	public BigDecimal getTotalCompra() {
-		return totalCompra;
-	}
-
-	public void setTotalCompra(BigDecimal totalCompra) {
-		this.totalCompra = totalCompra;
 	}
 
 	public LocalDate getDataCompra() {
@@ -81,27 +57,27 @@ public class VendaDTORequest {
 		this.dataCompra = dataCompra;
 	}
 
-	public Cliente getCliente() {
+	public AbstractDtoId getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(Cliente cliente) {
+	public void setCliente(AbstractDtoId cliente) {
 		this.cliente = cliente;
 	}
 
-	public Fornecedor getFornecedor() {
+	public AbstractDtoId getFornecedor() {
 		return fornecedor;
 	}
 
-	public void setFornecedor(Fornecedor fornecedor) {
+	public void setFornecedor(AbstractDtoId fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 
-	public List<Produto> getProdutos() {
+	public List<AbstractDtoId> getProdutos() {
 		return produtos;
 	}
 
-	public void setProdutos(List<Produto> produtos) {
+	public void setProdutos(List<AbstractDtoId> produtos) {
 		this.produtos = produtos;
 	}
 
@@ -109,7 +85,7 @@ public class VendaDTORequest {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(cliente, dataCompra, fornecedor, produtos, totalCompra);
+		result = prime * result + Objects.hash(cliente, dataCompra, fornecedor, produtos);
 		return result;
 	}
 
@@ -123,8 +99,7 @@ public class VendaDTORequest {
 			return false;
 		VendaDTORequest other = (VendaDTORequest) obj;
 		return Objects.equals(cliente, other.cliente) && Objects.equals(dataCompra, other.dataCompra)
-				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(produtos, other.produtos)
-				&& Objects.equals(totalCompra, other.totalCompra);
+				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(produtos, other.produtos);
 	}
 
 }

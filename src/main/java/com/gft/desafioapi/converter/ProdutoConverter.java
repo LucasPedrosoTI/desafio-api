@@ -1,17 +1,26 @@
 package com.gft.desafioapi.converter;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import com.gft.desafioapi.dto.AbstractDtoId;
 import com.gft.desafioapi.dto.produto.ProdutoDTO;
 import com.gft.desafioapi.dto.produto.ProdutoDTORequest;
+import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
+import com.gft.desafioapi.repository.FornecedorRepository;
 
 @Component
 public class ProdutoConverter {
+
+	@Autowired
+	FornecedorRepository fornecedorRepository;
 
 	public ProdutoDTO entityToDto(Produto produto) {
 
@@ -30,7 +39,9 @@ public class ProdutoConverter {
 	}
 
 	public List<ProdutoDTO> entityToDto(List<Produto> produtos) {
-		return produtos.stream().map(this::entityToDto).collect(Collectors.toList());
+		return produtos.stream()
+				.map(this::entityToDto)
+				.collect(Collectors.toList());
 	}
 
 	public Page<ProdutoDTO> entityToDto(Page<Produto> produtos) {
@@ -53,6 +64,22 @@ public class ProdutoConverter {
 	}
 
 	public Produto dtoToEntity(ProdutoDTORequest dto) {
+
+		AbstractDtoId fornecedorDto = Optional.ofNullable(dto.getFornecedor())
+				.orElse(null);
+		Long fornecedorId = null;
+
+		if (Objects.nonNull(fornecedorDto)) {
+			fornecedorId = fornecedorDto.getId();
+		}
+
+		Fornecedor fornecedor = null;
+
+		if (Objects.nonNull(fornecedorId)) {
+			fornecedor = fornecedorRepository.findById(fornecedorId)
+					.orElse(null);
+		}
+
 		return Produto.builder()
 				.withNome(dto.getNome())
 				.withValor(dto.getValor())
@@ -62,12 +89,14 @@ public class ProdutoConverter {
 				.withCategoria(dto.getCategoria())
 				.withCodigoProduto(dto.getCodigoProduto())
 				.withQuantidade(dto.getQuantidade())
-				.withFornecedor(dto.getFornecedor())
+				.withFornecedor(fornecedor)
 				.build();
 	}
 
 	public List<Produto> dtoToEntity(List<ProdutoDTO> dtos) {
-		return dtos.stream().map(this::dtoToEntity).collect(Collectors.toList());
+		return dtos.stream()
+				.map(this::dtoToEntity)
+				.collect(Collectors.toList());
 	}
 
 }

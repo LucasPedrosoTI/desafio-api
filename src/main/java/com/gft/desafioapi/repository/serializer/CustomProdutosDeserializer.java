@@ -9,19 +9,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.gft.desafioapi.model.Produto;
+import com.gft.desafioapi.dto.AbstractDtoId;
 import com.gft.desafioapi.repository.ProdutoRepository;
 import com.gft.desafioapi.utils.Constants;
 
 @Component
-public class CustomProdutosDeserializer extends StdDeserializer<List<Produto>> {
+public class CustomProdutosDeserializer extends StdDeserializer<List<AbstractDtoId>> {
 
 	@Autowired
-	ProdutoRepository produtoRepository;
+	transient ProdutoRepository produtoRepository;
 
 	private static final long serialVersionUID = -839983745171929649L;
 
@@ -34,10 +33,10 @@ public class CustomProdutosDeserializer extends StdDeserializer<List<Produto>> {
 	}
 
 	@Override
-	public List<Produto> deserialize(JsonParser jsonparser, DeserializationContext context)
-			throws IOException, JsonProcessingException {
+	public List<AbstractDtoId> deserialize(JsonParser jsonparser, DeserializationContext context)
+			throws IOException {
 
-		List<Produto> produtos = new ArrayList<>();
+		List<AbstractDtoId> produtos = new ArrayList<>();
 		JsonNode node = jsonparser.getCodec().readTree(jsonparser);
 
 		if (node.size() == 0) {
@@ -52,11 +51,12 @@ public class CustomProdutosDeserializer extends StdDeserializer<List<Produto>> {
 
 			Long id = element.get("id").asLong();
 
-			Produto produto = produtoRepository.findById(id).orElseThrow(() -> {
+					produtoRepository.findById(id)
+							.orElseThrow(() -> {
 				throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 			});
 
-			produtos.add(produto);
+					produtos.add(new AbstractDtoId(id));
 		});
 
 		return produtos;

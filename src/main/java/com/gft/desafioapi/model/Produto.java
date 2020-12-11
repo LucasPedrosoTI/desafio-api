@@ -3,6 +3,7 @@ package com.gft.desafioapi.model;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -43,7 +44,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
 	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
 
@@ -61,6 +62,11 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 	}
 
 	public Produto() {
+	}
+
+	public Produto(
+			Long id) {
+		super(id);
 	}
 
 	public String getNome() {

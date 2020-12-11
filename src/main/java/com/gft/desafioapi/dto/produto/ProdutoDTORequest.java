@@ -11,12 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gft.desafioapi.dto.AbstractDtoId;
 import com.gft.desafioapi.model.CategoriaEnum;
-import com.gft.desafioapi.model.Fornecedor;
-import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorDeserializer;
-import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -59,9 +55,9 @@ public class ProdutoDTORequest {
 	private Long quantidade;
 
 	@ApiModelProperty(position = 9, required = true, value = "ID do fornecedor")
-	@JsonSerialize(using = CustomProdutoFornecedorSerializer.class)
-	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
-	private Fornecedor fornecedor;
+	//	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
+	@NotNull
+	private AbstractDtoId fornecedor;
 
 	private ProdutoDTORequest(Builder builder) {
 		this.nome = builder.nome;
@@ -148,28 +144,26 @@ public class ProdutoDTORequest {
 		this.quantidade = quantidade;
 	}
 
-	public Fornecedor getFornecedor() {
+
+	public AbstractDtoId getFornecedor() {
 		return fornecedor;
 	}
 
-	public void setFornecedor(Fornecedor fornecedor) {
+	public void setFornecedor(AbstractDtoId fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(categoria, codigoProduto, fornecedor, imagem, nome, promocao, quantidade,
-				valor, valorPromo);
-		return result;
+		return Objects.hash(categoria, codigoProduto, fornecedor, imagem, nome, promocao, quantidade, valor,
+				valorPromo);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -202,7 +196,7 @@ public class ProdutoDTORequest {
 		private String imagem;
 		private CategoriaEnum categoria;
 		private Long quantidade;
-		private Fornecedor fornecedor;
+		private AbstractDtoId fornecedor;
 
 		private Builder() {
 		}
@@ -247,7 +241,7 @@ public class ProdutoDTORequest {
 			return this;
 		}
 
-		public Builder withFornecedor(Fornecedor fornecedor) {
+		public Builder withFornecedor(AbstractDtoId fornecedor) {
 			this.fornecedor = fornecedor;
 			return this;
 		}
