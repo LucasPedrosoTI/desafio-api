@@ -1,15 +1,12 @@
 package com.gft.desafioapi.converter;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.gft.desafioapi.dto.AbstractDtoId;
 import com.gft.desafioapi.dto.venda.VendaDTO;
 import com.gft.desafioapi.dto.venda.VendaDTORequest;
 import com.gft.desafioapi.model.Cliente;
@@ -39,9 +36,7 @@ public class VendaConverter {
 	}
 
 	public List<VendaDTO> entityToDto(List<Venda> vendas) {
-		return vendas.stream()
-				.map(this::entityToDto)
-				.collect(Collectors.toList());
+		return vendas.stream().map(this::entityToDto).collect(Collectors.toList());
 	}
 
 	public Page<VendaDTO> entityToDto(Page<Venda> vendas) {
@@ -49,48 +44,28 @@ public class VendaConverter {
 	}
 
 	public Venda dtoToEntity(VendaDTO dto) {
-		return new Venda(dto.getId(), dto.getTotalCompra(), dto.getDataCompra(), dto.getCliente(),
-				dto.getFornecedor(), dto.getProdutos());
+		return new Venda(dto.getId(), dto.getTotalCompra(), dto.getDataCompra(), dto.getCliente(), dto.getFornecedor(),
+				dto.getProdutos());
 	}
 
 	public Venda dtoToEntity(VendaDTORequest dto) {
 
 		Venda venda = new Venda();
 
-		AbstractDtoId fornecedorDto = Optional.ofNullable(dto.getFornecedor())
-				.orElse(null);
-		AbstractDtoId clienteDto = Optional.ofNullable(dto.getCliente())
-				.orElse(null);
-
-		Long fornecedorId = null;
-		Long clienteId = null;
-
 		Fornecedor fornecedor = null;
 		Cliente cliente = null;
 		List<Produto> produtos = null;
 
-		if (Objects.nonNull(fornecedorDto)) {
-			fornecedorId = fornecedorDto.getId();
+		if (dto.getFornecedor() != null && dto.getFornecedor().getId() != null) {
+			fornecedor = fornecedorRepository.getOne(dto.getFornecedor().getId());
 		}
 
-		if (Objects.nonNull(clienteDto)) {
-			clienteId = clienteDto.getId();
-		}
-
-		if (Objects.nonNull(fornecedorId)) {
-			fornecedor = fornecedorRepository.findById(fornecedorId)
-					.orElse(null);
-		}
-
-		if (Objects.nonNull(clienteId)) {
-			cliente = clienteRepository.findById(clienteId)
-					.orElse(null);
+		if (dto.getCliente() != null && dto.getCliente().getId() != null) {
+			cliente = clienteRepository.getOne(dto.getCliente().getId());
 		}
 
 		if (dto.getProdutos() != null) {
-			produtos = dto.getProdutos()
-					.stream()
-					.map(produto -> produtoRepository.getOne(produto.getId()))
+			produtos = dto.getProdutos().stream().map(produto -> produtoRepository.getOne(produto.getId()))
 					.collect(Collectors.toList());
 		}
 
@@ -103,8 +78,6 @@ public class VendaConverter {
 	}
 
 	public List<Venda> dtoToEntity(List<VendaDTO> dtos) {
-		return dtos.stream()
-				.map(this::dtoToEntity)
-				.collect(Collectors.toList());
+		return dtos.stream().map(this::dtoToEntity).collect(Collectors.toList());
 	}
 }
