@@ -22,7 +22,10 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
 	public Cliente findByEmail(String email);
 
-	@Query("select c from Cliente c where c.nome like %?1% and c.email like %?2% and c.documento like %?3% and (c.dataCadastro BETWEEN ?4 and ?5)")
+	@Query("select c from Cliente c where c.nome like %?1% "
+			+ "and c.email like %?2% "
+			+ "and c.documento like %?3% "
+			+ "and (c.dataCadastro BETWEEN ?4 and ?5)")
 	public Page<Cliente> pesquisarClientes(String nome, String email, String documento, LocalDate dataCadastroDe,
 			LocalDate dataCadastroAte, Pageable pageable);
 }

@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
 import com.gft.desafioapi.repository.filter.VendaFilter;
-import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.ApiUtils;
+import com.gft.desafioapi.utils.Constants;
 
 @Service
 public class VendaService {
@@ -45,6 +45,8 @@ public class VendaService {
 		ApiUtils.setIdNull(venda);
 
 		checkFornecedor(venda);
+
+		checkProdutos(venda);
 
 		validarSeProdutosPertencemAoFornecedor(venda);
 
@@ -77,14 +79,16 @@ public class VendaService {
 	}
 
 	private BigDecimal calcularTotalCompra(Venda venda) {
+		return venda.getProdutos()
+				.stream()
+				.map(p -> p.isPromocao() ? p.getValorPromo() : p.getValor())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
 
+	private void checkProdutos(Venda venda) {
 		if (Objects.isNull(venda.getProdutos())) {
 			throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 		}
-		// @formatter:off
-		return venda.getProdutos().stream().map(p -> p.isPromocao() ? p.getValorPromo() : p.getValor())
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-		// @formatter:on
 	}
 
 	private void checkFornecedor(Venda venda) {

@@ -42,7 +42,7 @@ public class ClienteService implements UserDetailsService {
 		final LocalDate dataCadastroDe = Optional.ofNullable(filter.getDataCadastroDe()).orElse(Constants.MIN_DATE);
 		final LocalDate dataCadastroAte = Optional.ofNullable(filter.getDataCadastroAte()).orElse(Constants.MAX_DATE);
 
-		return this.clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte,
+		return clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte,
 				pageable);
 	}
 
