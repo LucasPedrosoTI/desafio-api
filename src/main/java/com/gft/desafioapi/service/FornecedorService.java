@@ -1,7 +1,6 @@
 package com.gft.desafioapi.service;
 
 import java.util.Map;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Service;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.FornecedorRepository;
 import com.gft.desafioapi.repository.filter.FornecedorFilter;
-import com.gft.desafioapi.utils.Constants;
 import com.gft.desafioapi.utils.ApiUtils;
+import com.gft.desafioapi.utils.Constants;
 
 @Service
 public class FornecedorService {
@@ -24,12 +23,14 @@ public class FornecedorService {
 	@Autowired
 	FornecedorRepository fornecedorRepository;
 
-	public Page<Fornecedor> findAllWithFilter(FornecedorFilter filter, Pageable pageable) {
+	public Page<Fornecedor> pesquisarFornecedores(FornecedorFilter filter, Pageable pageable) {
 
-		String nome = Optional.ofNullable(filter.getNome()).orElse("");
-		String cnpj = Optional.ofNullable(filter.getCnpj()).orElse("");
+		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new FornecedorFilter());
 
-		return fornecedorRepository.findByNomeContainingAndCnpjContaining(nome, cnpj, pageable);
+		return fornecedorRepository.findByNomeContainingAndCnpjContaining(
+				filter.getValueFrom("nome", verifiedFilter),
+				filter.getValueFrom("cnpj", verifiedFilter),
+				pageable);
 	}
 
 	public Fornecedor findFornecedorById(Long id) {

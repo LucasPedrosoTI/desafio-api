@@ -2,13 +2,13 @@ package com.gft.desafioapi.repository.filter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class FornecedorFilter {
+public class FornecedorFilter implements FilterNormalizer {
 
 	@ApiModelProperty(value = "Nome do fornecedor", allowEmptyValue = true)
-	private String nome;
+	private String nome = "";
 
 	@ApiModelProperty(value = "CNPJ do fornecedor", allowEmptyValue = true)
-	private String cnpj;
+	private String cnpj = "";
 
 	public FornecedorFilter() {
 	}

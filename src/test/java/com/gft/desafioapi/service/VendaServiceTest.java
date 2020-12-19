@@ -1,9 +1,8 @@
 package com.gft.desafioapi.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.gft.desafioapi.utils.TestUtils.assertExceptionAndMessage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,18 +19,22 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
 
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.model.Venda;
 import com.gft.desafioapi.repository.VendaRepository;
-import com.gft.desafioapi.utils.ApiUtils;
+import com.gft.desafioapi.repository.filter.VendaFilter;
 import com.gft.desafioapi.utils.Constants;
 
-public class VendaServiceTest {
+class VendaServiceTest {
 
 	@Mock
 	private VendaRepository vendaRepository;
+
+	@Mock
+	private Pageable pageable;
 
 	@InjectMocks
 	private VendaService vendaService;
@@ -42,11 +45,11 @@ public class VendaServiceTest {
 
 	private Produto produto1;
 	private Produto produto2;
+	private VendaFilter filter;
 
 	@BeforeEach
 	public void setup() throws Exception {
-
-		vendaService = new VendaService();
+		filter = new VendaFilter();
 		fornecedor = new Fornecedor(1L, "Apple", "12345678912345", new ArrayList<>());
 
 		produto1 = Produto.builder()
@@ -65,37 +68,25 @@ public class VendaServiceTest {
 		produtos.add(produto1);
 		produtos.add(produto2);
 
-		venda = new Venda(1L, null, LocalDate.now(), null, fornecedor, new ArrayList<>());
+		venda = new Venda(1L, null, LocalDate.now(), null, fornecedor, produtos);
 
 		MockitoAnnotations.openMocks(this);
-	}
-
-	@Test
-	void deveSetarIdNull() throws Exception {
-
-		ApiUtils.setIdNull(venda);
-
-		assertNull(venda.getId());
 	}
 
 	@Test
 	void deveLancarErroSeNaoHouverFornecedor() throws Exception {
 		venda.setFornecedor(null);
 
-		Throwable exceptionThatWasThrown = assertThrows(EmptyResultDataAccessException.class,
+		assertExceptionAndMessage(EmptyResultDataAccessException.class, Constants.FORNECEDOR_INEXISTENTE,
 				() -> vendaService.create(venda));
-
-		assertThat(exceptionThatWasThrown.getMessage()).isEqualTo(Constants.FORNECEDOR_INEXISTENTE);
 	}
 
 	@Test
 	void deveLancarErroSeNaoHouverProdutos() throws Exception {
 		venda.setProdutos(null);
 
-		Throwable exceptionThatWasThrown = assertThrows(EmptyResultDataAccessException.class,
+		assertExceptionAndMessage(EmptyResultDataAccessException.class, Constants.PRODUTO_INEXISTENTE,
 				() -> vendaService.create(venda));
-
-		assertThat(exceptionThatWasThrown.getMessage()).isEqualTo(Constants.PRODUTO_INEXISTENTE);
 	}
 
 	@Test
@@ -104,18 +95,12 @@ public class VendaServiceTest {
 
 		produtos.get(0).setFornecedor(fornecedor2);
 
-		venda.setProdutos(produtos);
-
-		Throwable exceptionThatWasThrown = assertThrows(DataIntegrityViolationException.class,
+		assertExceptionAndMessage(DataIntegrityViolationException.class, Constants.FORNECEDOR_INVALIDO_MESSAGE,
 				() -> vendaService.create(venda));
-
-		assertThat(exceptionThatWasThrown.getMessage()).isEqualTo(Constants.FORNECEDOR_INVALIDO_MESSAGE);
 	}
 
 	@Test
 	void deveCalcularTotalCompra() throws Exception {
-
-		venda.setProdutos(produtos);
 
 		vendaService.create(venda);
 
@@ -145,6 +130,24 @@ public class VendaServiceTest {
 
 		verify(vendaRepository).save(vendaAtualizada);
 
+	}
+
+	@Test
+	void deveNormalizarFilterDaPesquisa() throws Exception {
+		filter.setTotalCompraDe(null);
+
+		vendaService.pesquisarVendas(filter, pageable);
+
+		verify(vendaRepository).pesquisarVendas(Constants.MIN_DATE, Constants.MAX_DATE, BigDecimal.ZERO,
+				Constants.MAX_DECIMAL, pageable);
+	}
+
+	@Test
+	void deveRetornarMapSuccessTrue() throws Exception {
+
+		doNothing().when(vendaRepository).deleteById(1L);
+
+		assertEquals(Constants.MAP_SUCCESS_TRUE, vendaService.delete(1L));
 	}
 
 }

@@ -61,7 +61,7 @@ public class FornecedorResource {
 	@ApiOperation("Lista todos os fornecedores")
 	@GetMapping
 	public Page<FornecedorDTO> listarFornecedores(FornecedorFilter filter, Pageable pageable) {
-		return createSelfLink(converter.entityToDto(fornecedorService.findAllWithFilter(filter, pageable)), resource);
+		return createSelfLink(converter.entityToDto(fornecedorService.pesquisarFornecedores(filter, pageable)), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'FornecedorInCache'+#id", condition = "#id == null")

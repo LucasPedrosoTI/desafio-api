@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 
 import javax.validation.Valid;
 
@@ -39,19 +38,21 @@ public class ProdutoService {
 
 	public Page<Produto> pesquisarProdutos(ProdutoFilter filter, Pageable pageable) {
 
-		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
-		final String codigoProduto = Optional.ofNullable(filter.getCodigoProduto()).orElse("");
-		final BigDecimal valorDe = Optional.ofNullable(filter.getValorDe()).orElse(BigDecimal.ZERO);
-		final BigDecimal valorAte = Optional.ofNullable(filter.getValorAte()).orElse(Constants.MAX_DECIMAL);
-		final BigDecimal valorPromoDe = Optional.ofNullable(filter.getValorPromoDe()).orElse(BigDecimal.ZERO);
-		final BigDecimal valorPromoAte = Optional.ofNullable(filter.getValorPromoAte()).orElse(Constants.MAX_DECIMAL);
-		final Long quantidadeDe = Optional.ofNullable(filter.getQuantidadeDe()).orElse(0L);
-		final Long quantidadeAte = Optional.ofNullable(filter.getQuantidadeAte())
-				.orElse(Constants.MAX_DECIMAL.longValue());
+		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new ProdutoFilter());
 
-		return this.produtoRepository.pesquisarProdutos(nome, codigoProduto, valorDe, valorAte, quantidadeDe,
-				quantidadeAte, valorPromoDe, valorPromoAte, pageable);
+		return this.produtoRepository.pesquisarProdutos(
+				filter.getValueFrom("nome", verifiedFilter),
+				filter.getValueFrom("codigoProduto", verifiedFilter),
+				new BigDecimal(filter.getValueFrom("valorDe", verifiedFilter)),
+				new BigDecimal(filter.getValueFrom("valorAte", verifiedFilter)),
+				Long.parseLong(filter.getValueFrom("quantidadeDe", verifiedFilter)),
+				Long.parseLong(filter.getValueFrom("quantidadeAte", verifiedFilter)),
+				new BigDecimal(filter.getValueFrom("valorPromoDe", verifiedFilter)),
+				new BigDecimal(filter.getValueFrom("valorPromoAte", verifiedFilter)),
+				pageable);
+
 	}
+
 
 	public Produto findProdutoById(Long id) {
 		return this.produtoRepository.findById(id).orElseThrow(() -> {
@@ -63,22 +64,22 @@ public class ProdutoService {
 
 		ApiUtils.setIdNull(produto);
 
-		this.checkFornecedor(produto);
+		checkFornecedor(produto);
 
-		this.validatePromocao(produto);
+		validatePromocao(produto);
 
-		this.fornecedorService.findFornecedorById(produto.getFornecedor().getId());
+		fornecedorService.findFornecedorById(produto.getFornecedor().getId());
 
-		return this.produtoRepository.save(produto);
+		return produtoRepository.save(produto);
 	}
 
 	public Produto update(Long id, @Valid Produto produto) {
 
-		Produto produtoAtualizado = produto.coalesce(this.findProdutoById(id), id);
+		Produto produtoAtualizado = produto.coalesce(findProdutoById(id), id);
 
-		this.validatePromocao(produtoAtualizado);
+		validatePromocao(produtoAtualizado);
 
-		return this.produtoRepository.save(produtoAtualizado);
+		return produtoRepository.save(produtoAtualizado);
 	}
 
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
@@ -89,9 +90,9 @@ public class ProdutoService {
 
 	public Produto salvarImagem(MultipartFile imagem, Long id) throws IOException {
 
-		Produto produto = this.findProdutoById(id);
+		Produto produto = findProdutoById(id);
 
-		String fileName = this.getRandomString() + "_"
+		String fileName = ApiUtils.getRandomString() + "_"
 				+ StringUtils.cleanPath(Optional.ofNullable(imagem.getOriginalFilename()).orElse("no-name"));
 
 		Path fileLocation = Paths.get("src\\main\\resources\\static\\uploads\\" + fileName);
@@ -100,13 +101,11 @@ public class ProdutoService {
 
 		produto.setImagem(fileName);
 
-		return this.produtoRepository.save(produto);
+		return produtoRepository.save(produto);
 
 	}
 
-	private String getRandomString() {
-		return new Random().nextInt(999999) + "_" + System.currentTimeMillis();
-	}
+
 
 	private void validatePromocao(Produto produto) {
 		if (Boolean.FALSE.equals(produto.isPromocao()) && Objects.nonNull(produto.getValorPromo())) {

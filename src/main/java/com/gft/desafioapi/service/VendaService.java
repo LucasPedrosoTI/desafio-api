@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,13 +25,18 @@ public class VendaService {
 	@Autowired
 	VendaRepository vendaRepository;
 
-	public Page<Venda> findAllWithFilter(VendaFilter filter, Pageable pageable) {
-		LocalDate dataCompraDe = Optional.ofNullable(filter.getDataCompraDe()).orElse(Constants.MIN_DATE);
-		LocalDate dataCompraAte = Optional.ofNullable(filter.getDataCompraAte()).orElse(Constants.MAX_DATE);
-		BigDecimal totalCompraDe = Optional.ofNullable(filter.getTotalCompraDe()).orElse(BigDecimal.ZERO);
-		BigDecimal totalCompraAte = Optional.ofNullable(filter.getTotalCompraAte()).orElse(Constants.MAX_DECIMAL);
+	public Page<Venda> pesquisarVendas(VendaFilter filter, Pageable pageable) {
 
-		return vendaRepository.pesquisarVendas(dataCompraDe, dataCompraAte, totalCompraDe, totalCompraAte, pageable);
+		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new VendaFilter());
+
+		return vendaRepository.pesquisarVendas(
+				LocalDate.parse(filter.getValueFrom("dataCompraDe", verifiedFilter)),
+				LocalDate.parse(filter.getValueFrom("dataCompraAte",
+						verifiedFilter)),
+				new BigDecimal(filter.getValueFrom("totalCompraDe", verifiedFilter)),
+				new BigDecimal(filter.getValueFrom("totalCompraAte",
+						verifiedFilter)),
+				pageable);
 	}
 
 	public Venda findVendaById(Long id) {

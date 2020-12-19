@@ -36,13 +36,21 @@ public class ClienteService implements UserDetailsService {
 	BCryptPasswordEncoder encoder;
 
 	public Page<Cliente> pesquisarClientes(ClienteFilter filter, Pageable pageable) {
-		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
-		final String email = Optional.ofNullable(filter.getEmail()).orElse("");
-		final String documento = Optional.ofNullable(filter.getDocumento()).orElse("");
-		final LocalDate dataCadastroDe = Optional.ofNullable(filter.getDataCadastroDe()).orElse(Constants.MIN_DATE);
-		final LocalDate dataCadastroAte = Optional.ofNullable(filter.getDataCadastroAte()).orElse(Constants.MAX_DATE);
 
-		return clienteRepository.pesquisarClientes(nome, email, documento, dataCadastroDe, dataCadastroAte,
+		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new ClienteFilter());
+
+		//		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
+		//		final String email = Optional.ofNullable(filter.getEmail()).orElse("");
+		//		final String documento = Optional.ofNullable(filter.getDocumento()).orElse("");
+		//		final LocalDate dataCadastroDe = Optional.ofNullable(filter.getDataCadastroDe()).orElse(Constants.MIN_DATE);
+		//		final LocalDate dataCadastroAte = Optional.ofNullable(filter.getDataCadastroAte()).orElse(Constants.MAX_DATE);
+
+		return clienteRepository.pesquisarClientes(
+				filter.getValueFrom("nome", verifiedFilter),
+				filter.getValueFrom("email", verifiedFilter),
+				filter.getValueFrom("documento", verifiedFilter),
+				LocalDate.parse(filter.getValueFrom("dataCadastroDe", verifiedFilter)),
+				LocalDate.parse(filter.getValueFrom("dataCadastroAte", verifiedFilter)),
 				pageable);
 	}
 

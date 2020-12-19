@@ -61,7 +61,7 @@ public class VendaResource {
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
 	public Page<VendaDTO> listarVendas(VendaFilter filter, Pageable pageable) {
-		return createSelfLink(converter.entityToDto(vendaService.findAllWithFilter(filter, pageable)), resource);
+		return createSelfLink(converter.entityToDto(vendaService.pesquisarVendas(filter, pageable)), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id == null")

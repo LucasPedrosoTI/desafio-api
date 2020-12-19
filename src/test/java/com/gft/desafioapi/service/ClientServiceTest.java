@@ -16,10 +16,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.repository.ClienteRepository;
+import com.gft.desafioapi.repository.filter.ClienteFilter;
 import com.gft.desafioapi.utils.Constants;
 
 public class ClientServiceTest {
@@ -29,6 +31,9 @@ public class ClientServiceTest {
 
 	@Mock
 	private BCryptPasswordEncoder encoder;
+
+	@Mock
+	private Pageable pageable;
 
 	@InjectMocks
 	private ClienteService clienteService;
@@ -121,6 +126,16 @@ public class ClientServiceTest {
 		verify(clienteRepository).save(clienteEmBanco);
 	}
 
+	@Test
+	void deveNormalizarFilterDaPesquisa() throws Exception {
+
+		ClienteFilter filter = new ClienteFilter();
+
+		clienteService.pesquisarClientes(filter, pageable);
+
+		verify(clienteRepository).pesquisarClientes("", "", "", Constants.MIN_DATE, Constants.MAX_DATE, pageable);
+	}
+
 	private void mockFindById() {
 		when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteEmBanco));
 	}
@@ -128,5 +143,6 @@ public class ClientServiceTest {
 	private void mockEncodarSenha() {
 		when(encoder.encode("123456")).thenReturn("$2a$10$Km3aDWfDD.yfONVpgm5UIOpq8N2NLLeTZtfz7gGOp3WPW8fMWYH3G");
 	}
+
 
 }

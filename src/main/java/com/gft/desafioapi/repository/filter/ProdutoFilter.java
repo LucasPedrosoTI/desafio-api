@@ -2,16 +2,18 @@ package com.gft.desafioapi.repository.filter;
 
 import java.math.BigDecimal;
 
-public class ProdutoFilter {
+import com.gft.desafioapi.utils.Constants;
 
-	private String nome;
-	private String codigoProduto;
-	private BigDecimal valorDe;
-	private BigDecimal valorAte;
-	private BigDecimal valorPromoDe;
-	private BigDecimal valorPromoAte;
-	private Long quantidadeDe;
-	private Long quantidadeAte;
+public class ProdutoFilter implements FilterNormalizer {
+
+	private String nome = "";
+	private String codigoProduto = "";
+	private BigDecimal valorDe = BigDecimal.ZERO;
+	private BigDecimal valorAte = Constants.MAX_DECIMAL;
+	private BigDecimal valorPromoDe = BigDecimal.ZERO;
+	private BigDecimal valorPromoAte = Constants.MAX_DECIMAL;
+	private Long quantidadeDe = 0L;
+	private Long quantidadeAte = Constants.MAX_DECIMAL.longValue();
 
 	public ProdutoFilter(String nome, String codigoProduto, BigDecimal valorDe, BigDecimal valorAte,
 			BigDecimal valorPromoDe, BigDecimal valorPromoAte, Long quantidadeDe, Long quantidadeAte) {

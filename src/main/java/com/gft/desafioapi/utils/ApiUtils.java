@@ -3,6 +3,7 @@ package com.gft.desafioapi.utils;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.util.Objects;
+import java.util.Random;
 
 import org.springframework.data.domain.Page;
 
@@ -37,5 +38,9 @@ public class ApiUtils {
 
 	public static <T extends AbstractDTO> Page<T> createSelfLink(Page<T> dtos, Class<?> resource) {
 		return dtos.map(dto -> createSelfLink(dto, resource));
+	}
+
+	public static String getRandomString() {
+		return new Random().nextInt(999999) + "_" + System.currentTimeMillis();
 	}
 }
