@@ -10,11 +10,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.gft.desafioapi.dto.AbstractDtoId;
+import com.gft.desafioapi.dto.IdDto;
 import com.gft.desafioapi.repository.FornecedorRepository;
 
 @Component
-public class CustomProdutoFornecedorDeserializer extends StdDeserializer<AbstractDtoId> {
+public class CustomProdutoFornecedorDeserializer extends StdDeserializer<IdDto> {
 
 	@Autowired
 	FornecedorRepository fornecedorRepository;
@@ -30,7 +30,7 @@ public class CustomProdutoFornecedorDeserializer extends StdDeserializer<Abstrac
 	}
 
 	@Override
-	public AbstractDtoId deserialize(JsonParser jsonparser, DeserializationContext context)
+	public IdDto deserialize(JsonParser jsonparser, DeserializationContext context)
 			throws IOException {
 
 		Long id = null;
@@ -48,7 +48,7 @@ public class CustomProdutoFornecedorDeserializer extends StdDeserializer<Abstrac
 			throw new EmptyResultDataAccessException(1);
 		});
 
-		return new AbstractDtoId(id);
+		return new IdDto(id);
 	}
 
 }

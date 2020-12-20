@@ -35,7 +35,11 @@ public class FornecedorServiceTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-		fornecedor = new Fornecedor(1L, "Nome", "12345678912345", null);
+		fornecedor = Fornecedor.builder()
+				.withId(1L)
+				.withNome("Nome")
+				.withCnpj("12345678912345")
+				.build();
 		filter = new FornecedorFilter();
 		MockitoAnnotations.openMocks(this);
 	}
@@ -43,7 +47,8 @@ public class FornecedorServiceTest {
 	@Test
 	void deveCriarFornecedorSetandoIdNull() throws Exception {
 
-		Fornecedor fornecedorFinal = new Fornecedor(null, "Nome", "12345678912345", null);
+		Fornecedor fornecedorFinal = fornecedor;
+		fornecedorFinal.setId(null);
 
 		fornecedorService.create(fornecedor);
 
@@ -53,7 +58,7 @@ public class FornecedorServiceTest {
 	@Test
 	void deveAtualizaFornecedor() throws Exception {
 
-		Fornecedor atualizacao = new Fornecedor(null, "Apple", null, null);
+		Fornecedor atualizacao = Fornecedor.builder().withNome("Apple").build();
 
 		when(fornecedorRepository.findById(1L)).thenReturn(Optional.of(fornecedor));
 

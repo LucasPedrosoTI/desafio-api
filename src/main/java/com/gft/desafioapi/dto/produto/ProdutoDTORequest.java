@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.gft.desafioapi.dto.AbstractDtoId;
+import com.gft.desafioapi.dto.IdDto;
 import com.gft.desafioapi.model.CategoriaEnum;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -57,7 +57,7 @@ public class ProdutoDTORequest {
 	@ApiModelProperty(position = 9, required = true, value = "ID do fornecedor")
 	//	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
 	@NotNull
-	private AbstractDtoId fornecedor;
+	private IdDto fornecedor;
 
 	private ProdutoDTORequest(Builder builder) {
 		this.nome = builder.nome;
@@ -145,11 +145,11 @@ public class ProdutoDTORequest {
 	}
 
 
-	public AbstractDtoId getFornecedor() {
+	public IdDto getFornecedor() {
 		return fornecedor;
 	}
 
-	public void setFornecedor(AbstractDtoId fornecedor) {
+	public void setFornecedor(IdDto fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 
@@ -196,7 +196,7 @@ public class ProdutoDTORequest {
 		private String imagem;
 		private CategoriaEnum categoria;
 		private Long quantidade;
-		private AbstractDtoId fornecedor;
+		private IdDto fornecedor;
 
 		private Builder() {
 		}
@@ -241,7 +241,7 @@ public class ProdutoDTORequest {
 			return this;
 		}
 
-		public Builder withFornecedor(AbstractDtoId fornecedor) {
+		public Builder withFornecedor(IdDto fornecedor) {
 			this.fornecedor = fornecedor;
 			return this;
 		}

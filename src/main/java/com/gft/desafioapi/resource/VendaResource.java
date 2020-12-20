@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.converter.VendaConverter;
-import com.gft.desafioapi.dto.venda.VendaDTO;
+import com.gft.desafioapi.dto.venda.VendaDTOResponse;
 import com.gft.desafioapi.dto.venda.VendaDTORequest;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Venda;
@@ -60,34 +60,34 @@ public class VendaResource {
 	@Cacheable(value = "custom-cache", key = "'VendasInCache'+#filter")
 	@ApiOperation("Lista todas as vendas")
 	@GetMapping
-	public Page<VendaDTO> listarVendas(VendaFilter filter, Pageable pageable) {
-		return createSelfLink(converter.entityToDto(vendaService.pesquisarVendas(filter, pageable)), resource);
+	public Page<VendaDTOResponse> listarVendas(VendaFilter filter, Pageable pageable) {
+		return createSelfLink(converter.entityToDtoResponse(vendaService.pesquisarVendas(filter, pageable)), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'VendaInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna uma venda por ID")
 	@GetMapping("/{id}")
-	public VendaDTO encontrarVendaPorId(@PathVariable Long id) {
-		return createRelListAllLink(converter.entityToDto(vendaService.findVendaById(id)), resource);
+	public VendaDTOResponse encontrarVendaPorId(@PathVariable Long id) {
+		return createRelListAllLink(converter.entityToDtoResponse(vendaService.findVendaById(id)), resource);
 	}
 
 	@ApiOperation("Cadastra uma nova venda")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public VendaDTO criarVenda(@RequestBody @Valid VendaDTORequest dto, HttpServletResponse response) {
-		Venda vendaCriada = vendaService.create(converter.dtoToEntity(dto));
+	public VendaDTOResponse criarVenda(@RequestBody @Valid VendaDTORequest dto, HttpServletResponse response) {
+		Venda vendaCriada = vendaService.create(converter.dtoRequestToEntity(dto));
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaCriada.getId()));
-		return createSelfLink(converter.entityToDto(vendaCriada), resource);
+		return createSelfLink(converter.entityToDtoResponse(vendaCriada), resource);
 	}
 
 	@ApiOperation("Atualiza os dados de uma venda por ID")
 	@PutMapping("/{id}")
-	public VendaDTO atualizarVenda(@PathVariable Long id, @RequestBody VendaDTORequest dto) {
+	public VendaDTOResponse atualizarVenda(@PathVariable Long id, @RequestBody VendaDTORequest dto) {
 
-		Venda venda = vendaService.update(id, converter.dtoToEntity(dto));
+		Venda venda = vendaService.update(id, converter.dtoRequestToEntity(dto));
 
-		return converter.entityToDto(venda);
+		return converter.entityToDtoResponse(venda);
 	}
 
 	@ApiOperation("Exclui uma venda por ID")

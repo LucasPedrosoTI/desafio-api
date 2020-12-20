@@ -10,7 +10,7 @@ import com.gft.desafioapi.dto.AbstractDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class ClienteDTO extends AbstractDTO {
+public class ClienteDTOResponse extends AbstractDTO {
 
 	@ApiModelProperty(example = "Marco Santos", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -30,10 +30,10 @@ public class ClienteDTO extends AbstractDTO {
 	@NotBlank
 	private String documento;
 
-	public ClienteDTO() {
+	public ClienteDTOResponse() {
 	}
 
-	public ClienteDTO(Long id, String nome, String email, String senha, String documento) {
+	public ClienteDTOResponse(Long id, String nome, String email, String senha, String documento) {
 		super(id);
 		this.nome = nome;
 		this.email = email;
@@ -89,7 +89,7 @@ public class ClienteDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ClienteDTO other = (ClienteDTO) obj;
+		ClienteDTOResponse other = (ClienteDTOResponse) obj;
 		return Objects.equals(documento, other.documento) && Objects.equals(email, other.email)
 				&& Objects.equals(super.getId(), other.getId()) && Objects.equals(nome, other.nome)
 				&& Objects.equals(senha, other.senha);

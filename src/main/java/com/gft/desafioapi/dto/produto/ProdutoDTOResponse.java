@@ -24,7 +24,7 @@ import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerialize
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class ProdutoDTO extends AbstractDTO {
+public class ProdutoDTOResponse extends AbstractDTO {
 
 	@ApiModelProperty(example = "Redmi Note 9", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -67,7 +67,7 @@ public class ProdutoDTO extends AbstractDTO {
 	@JsonDeserialize(using = CustomProdutoFornecedorDeserializer.class)
 	private Fornecedor fornecedor;
 
-	private ProdutoDTO(Builder builder) {
+	private ProdutoDTOResponse(Builder builder) {
 		super(builder.id);
 		this.nome = builder.nome;
 		this.codigoProduto = builder.codigoProduto;
@@ -80,7 +80,7 @@ public class ProdutoDTO extends AbstractDTO {
 		this.fornecedor = builder.fornecedor;
 	}
 
-	public ProdutoDTO() {
+	public ProdutoDTOResponse() {
 	}
 
 	public String getNome() {
@@ -178,7 +178,7 @@ public class ProdutoDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProdutoDTO other = (ProdutoDTO) obj;
+		ProdutoDTOResponse other = (ProdutoDTOResponse) obj;
 		return categoria == other.categoria && Objects.equals(codigoProduto, other.codigoProduto)
 				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(imagem, other.imagem)
 				&& Objects.equals(nome, other.nome) && Objects.equals(promocao, other.promocao)
@@ -187,7 +187,7 @@ public class ProdutoDTO extends AbstractDTO {
 	}
 
 	/**
-	 * Creates builder to build {@link ProdutoDTO}.
+	 * Creates builder to build {@link ProdutoDTOResponse}.
 	 * 
 	 * @return created builder
 	 */
@@ -196,7 +196,7 @@ public class ProdutoDTO extends AbstractDTO {
 	}
 
 	/**
-	 * Builder to build {@link ProdutoDTO}.
+	 * Builder to build {@link ProdutoDTOResponse}.
 	 */
 	public static final class Builder {
 		private Long id;
@@ -263,8 +263,8 @@ public class ProdutoDTO extends AbstractDTO {
 			return this;
 		}
 
-		public ProdutoDTO build() {
-			return new ProdutoDTO(this);
+		public ProdutoDTOResponse build() {
+			return new ProdutoDTOResponse(this);
 		}
 	}
 

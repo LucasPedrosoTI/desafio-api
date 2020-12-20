@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafioapi.converter.ClienteConverter;
-import com.gft.desafioapi.dto.cliente.ClienteDTO;
+import com.gft.desafioapi.dto.cliente.ClienteDTOResponse;
 import com.gft.desafioapi.dto.cliente.ClienteDTORequest;
 import com.gft.desafioapi.event.RecursoCriadoEvent;
 import com.gft.desafioapi.model.Cliente;
@@ -60,18 +60,18 @@ public class ClienteResource {
 	@Cacheable(value = "custom-cache", key = "'ClientesInCache'+#filter")
 	@ApiOperation("Lista todos os clientes")
 	@GetMapping
-	public Page<ClienteDTO> listarClientes(ClienteFilter filter, Pageable pageable) {
+	public Page<ClienteDTOResponse> listarClientes(ClienteFilter filter, Pageable pageable) {
 
 		Page<Cliente> clientes = clienteService.pesquisarClientes(filter, pageable);
 
-		return createSelfLink(converter.entityToDto(clientes), resource);
+		return createSelfLink(converter.entityToDtoResponse(clientes), resource);
 	}
 
 	@CacheEvict(value = "custom-cache", key = "'ClienteInCache'+#id", condition = "#id == null")
 	@Cacheable(value = "custom-cache", key = "'ClienteInCache'+#id", condition = "#id != null")
 	@ApiOperation("Retorna um cliente por ID")
 	@GetMapping("/{id}")
-	public ClienteDTO encontrarClientePorId(@PathVariable Long id) {
+	public ClienteDTOResponse encontrarClientePorId(@PathVariable Long id) {
 		Cliente cliente = clienteService.findClienteById(id);
 		return createRelListAllLink(converter.entityToDtoResponse(cliente), resource);
 	}
@@ -79,9 +79,9 @@ public class ClienteResource {
 	@ApiOperation("Cadastra um novo cliente")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ClienteDTO criarCliente(@RequestBody @Valid ClienteDTORequest dto, HttpServletResponse response) {
+	public ClienteDTOResponse criarCliente(@RequestBody @Valid ClienteDTORequest dto, HttpServletResponse response) {
 
-		Cliente cliente = clienteService.create(converter.dtoToEntity(dto));
+		Cliente cliente = clienteService.create(converter.dtoRequestToEntity(dto));
 
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, cliente.getId()));
 
@@ -90,9 +90,9 @@ public class ClienteResource {
 
 	@ApiOperation("Atualiza os dados de um cliente por ID")
 	@PutMapping("/{id}")
-	public ClienteDTO atualizarCliente(@PathVariable Long id, @RequestBody ClienteDTORequest dto) {
+	public ClienteDTOResponse atualizarCliente(@PathVariable Long id, @RequestBody ClienteDTORequest dto) {
 
-		Cliente cliente = clienteService.update(id, converter.dtoToEntity(dto));
+		Cliente cliente = clienteService.update(id, converter.dtoRequestToEntity(dto));
 
 		return converter.entityToDtoResponse(cliente);
 	}
@@ -105,21 +105,21 @@ public class ClienteResource {
 
 	@ApiOperation("Lista os clientes em ordem alfabética crescente por nome")
 	@GetMapping("/asc")
-	public Page<ClienteDTO> listarClientesAsc(Pageable pageable) {
+	public Page<ClienteDTOResponse> listarClientesAsc(Pageable pageable) {
 
-		return createSelfLink(converter.entityToDto(clienteRepository.findAllOrderByNomeAsc(pageable)), resource);
+		return createSelfLink(converter.entityToDtoResponse(clienteRepository.findAllOrderByNomeAsc(pageable)), resource);
 	}
 
 	@ApiOperation("Lista os clientes em ordem alfabética decrescente por nome")
 	@GetMapping("/desc")
-	public Page<ClienteDTO> listarClientesDesc(Pageable pageable) {
-		return createSelfLink(converter.entityToDto(clienteRepository.findAllOrderByNomeDesc(pageable)), resource);
+	public Page<ClienteDTOResponse> listarClientesDesc(Pageable pageable) {
+		return createSelfLink(converter.entityToDtoResponse(clienteRepository.findAllOrderByNomeDesc(pageable)), resource);
 	}
 
 	@ApiOperation("Busca clientes por nome")
 	@GetMapping("/nome/{nome}")
-	public Page<ClienteDTO> encontrarClientesPorNome(@PathVariable String nome, Pageable pageable) {
-		return createSelfLink(converter.entityToDto(clienteRepository.findByNomeContaining(nome, pageable)), resource);
+	public Page<ClienteDTOResponse> encontrarClientesPorNome(@PathVariable String nome, Pageable pageable) {
+		return createSelfLink(converter.entityToDtoResponse(clienteRepository.findByNomeContaining(nome, pageable)), resource);
 	}
 
 

@@ -50,7 +50,12 @@ class VendaServiceTest {
 	@BeforeEach
 	public void setup() throws Exception {
 		filter = new VendaFilter();
-		fornecedor = new Fornecedor(1L, "Apple", "12345678912345", new ArrayList<>());
+		fornecedor = Fornecedor.builder()
+				.withId(1L)
+				.withNome("Nome")
+				.withCnpj("12345678912345")
+				.withProdutos(new ArrayList<>())
+				.build();
 
 		produto1 = Produto.builder()
 				.withFornecedor(fornecedor)
@@ -68,7 +73,14 @@ class VendaServiceTest {
 		produtos.add(produto1);
 		produtos.add(produto2);
 
-		venda = new Venda(1L, null, LocalDate.now(), null, fornecedor, produtos);
+		venda = Venda.builder()
+				.withId(1L)
+				.withCliente(null)
+				.withDataCompra(LocalDate.now())
+				.withTotalCompra(BigDecimal.ZERO)
+				.withFornecedor(fornecedor)
+				.withProdutos(produtos)
+				.build();
 
 		MockitoAnnotations.openMocks(this);
 	}
@@ -91,7 +103,7 @@ class VendaServiceTest {
 
 	@Test
 	void deveLancarErroSeProdutoForDeFornecedorDiferente() throws Exception {
-		Fornecedor fornecedor2 = new Fornecedor(2L, null, null, null);
+		Fornecedor fornecedor2 = Fornecedor.builder().withId(2L).build();
 
 		produtos.get(0).setFornecedor(fornecedor2);
 
@@ -118,17 +130,18 @@ class VendaServiceTest {
 	@Test
 	void deveAtualizarVenda() throws Exception {
 
-		Venda vendaRequest = new Venda(null, null, null, null, fornecedor, produtos);
+		LocalDate data = LocalDate.of(2020, 12, 1);
 
-		Venda vendaAtualizada = new Venda(1L, BigDecimal.valueOf(1500), LocalDate.now(), null, fornecedor, produtos);
+		Venda atualizacao = Venda.builder().withDataCompra(data).withProdutos(null).build();
 
 		when(vendaRepository.findById(1L)).thenReturn(Optional.of(venda));
 
-		when(vendaRepository.save(vendaAtualizada)).thenReturn(vendaAtualizada);
+		vendaService.update(1L, atualizacao);
 
-		vendaService.update(1L, vendaRequest);
+		venda.setDataCompra(data);
+		venda.setTotalCompra(BigDecimal.valueOf(1500));
 
-		verify(vendaRepository).save(vendaAtualizada);
+		verify(vendaRepository).save(venda);
 
 	}
 

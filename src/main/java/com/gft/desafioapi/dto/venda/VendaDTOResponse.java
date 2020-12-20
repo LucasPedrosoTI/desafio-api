@@ -2,9 +2,11 @@ package com.gft.desafioapi.dto.venda;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Generated;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
@@ -23,7 +25,7 @@ import com.gft.desafioapi.repository.serializer.CustomVendaClienteSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class VendaDTO extends AbstractDTO {
+public class VendaDTOResponse extends AbstractDTO {
 
 	@ApiModelProperty(hidden = true)
 	@DecimalMin(value = "0")
@@ -49,22 +51,18 @@ public class VendaDTO extends AbstractDTO {
 	@JsonDeserialize(using = CustomProdutosDeserializer.class)
 	private List<Produto> produtos;
 
-	public VendaDTO() {}
 
-	public VendaDTO(
-			Long id,
-			BigDecimal totalCompra,
-			LocalDate dataCompra,
-			Cliente cliente,
-			Fornecedor fornecedor,
-			List<Produto> produtos) {
-		super(id);
-		this.totalCompra = totalCompra;
-		this.dataCompra = dataCompra;
-		this.cliente = cliente;
-		this.fornecedor = fornecedor;
-		this.produtos = produtos;
+	@Generated("SparkTools")
+	private VendaDTOResponse(Builder builder) {
+		super(builder.id);
+		this.totalCompra = builder.totalCompra;
+		this.dataCompra = builder.dataCompra;
+		this.cliente = builder.cliente;
+		this.fornecedor = builder.fornecedor;
+		this.produtos = builder.produtos;
 	}
+
+	private VendaDTOResponse() {}
 
 	public BigDecimal getTotalCompra() {
 		return totalCompra;
@@ -122,10 +120,69 @@ public class VendaDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		VendaDTO other = (VendaDTO) obj;
+		VendaDTOResponse other = (VendaDTOResponse) obj;
 		return Objects.equals(cliente, other.cliente) && Objects.equals(dataCompra, other.dataCompra)
 				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(produtos, other.produtos)
 				&& Objects.equals(totalCompra, other.totalCompra);
+	}
+
+	/**
+	 * Creates builder to build {@link VendaDTOResponse}.
+	 * 
+	 * @return created builder
+	 */
+	@Generated("SparkTools")
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	/**
+	 * Builder to build {@link VendaDTOResponse}.
+	 */
+	@Generated("SparkTools")
+	public static final class Builder {
+		private Long id;
+		private BigDecimal totalCompra;
+		private LocalDate dataCompra;
+		private Cliente cliente;
+		private Fornecedor fornecedor;
+		private List<Produto> produtos = Collections.emptyList();
+
+		private Builder() {}
+
+		public Builder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withTotalCompra(BigDecimal totalCompra) {
+			this.totalCompra = totalCompra;
+			return this;
+		}
+
+		public Builder withDataCompra(LocalDate dataCompra) {
+			this.dataCompra = dataCompra;
+			return this;
+		}
+
+		public Builder withCliente(Cliente cliente) {
+			this.cliente = cliente;
+			return this;
+		}
+
+		public Builder withFornecedor(Fornecedor fornecedor) {
+			this.fornecedor = fornecedor;
+			return this;
+		}
+
+		public Builder withProdutos(List<Produto> produtos) {
+			this.produtos = produtos;
+			return this;
+		}
+
+		public VendaDTOResponse build() {
+			return new VendaDTOResponse(this);
+		}
 	}
 
 }

@@ -18,7 +18,7 @@ import com.gft.desafioapi.repository.serializer.CustomProdutosSerializer;
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class FornecedorDTO extends AbstractDTO {
+public class FornecedorDTOResponse extends AbstractDTO {
 
 
 	@ApiModelProperty(example = "Apple", allowEmptyValue = false, required = true)
@@ -35,10 +35,10 @@ public class FornecedorDTO extends AbstractDTO {
 	@JsonSerialize(using = CustomProdutosSerializer.class)
 	private List<Produto> produtos;
 
-	public FornecedorDTO() {
+	public FornecedorDTOResponse() {
 	}
 
-	public FornecedorDTO(Long id, String nome, String cnpj, List<Produto> produtos) {
+	public FornecedorDTOResponse(Long id, String nome, String cnpj, List<Produto> produtos) {
 		super(id);
 		this.nome = nome;
 		this.cnpj = cnpj;
@@ -85,7 +85,7 @@ public class FornecedorDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FornecedorDTO other = (FornecedorDTO) obj;
+		FornecedorDTOResponse other = (FornecedorDTOResponse) obj;
 		return Objects.equals(cnpj, other.cnpj) && Objects.equals(nome, other.nome)
 				&& Objects.equals(produtos, other.produtos);
 	}

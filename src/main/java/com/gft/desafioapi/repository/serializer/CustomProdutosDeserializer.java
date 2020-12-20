@@ -12,12 +12,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.gft.desafioapi.dto.AbstractDtoId;
+import com.gft.desafioapi.dto.IdDto;
 import com.gft.desafioapi.repository.ProdutoRepository;
 import com.gft.desafioapi.utils.Constants;
 
 @Component
-public class CustomProdutosDeserializer extends StdDeserializer<List<AbstractDtoId>> {
+public class CustomProdutosDeserializer extends StdDeserializer<List<IdDto>> {
 
 	@Autowired
 	transient ProdutoRepository produtoRepository;
@@ -33,10 +33,10 @@ public class CustomProdutosDeserializer extends StdDeserializer<List<AbstractDto
 	}
 
 	@Override
-	public List<AbstractDtoId> deserialize(JsonParser jsonparser, DeserializationContext context)
+	public List<IdDto> deserialize(JsonParser jsonparser, DeserializationContext context)
 			throws IOException {
 
-		List<AbstractDtoId> produtos = new ArrayList<>();
+		List<IdDto> produtos = new ArrayList<>();
 		JsonNode node = jsonparser.getCodec().readTree(jsonparser);
 
 		if (node.size() == 0) {
@@ -56,7 +56,7 @@ public class CustomProdutosDeserializer extends StdDeserializer<List<AbstractDto
 				throw new EmptyResultDataAccessException(Constants.PRODUTO_INEXISTENTE, 1);
 			});
 
-					produtos.add(new AbstractDtoId(id));
+					produtos.add(new IdDto(id));
 		});
 
 		return produtos;

@@ -49,7 +49,12 @@ class ProdutoServiceTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-		fornecedor = new Fornecedor(1L, "Apple", "12345678912345", null);
+		fornecedor = Fornecedor.builder()
+				.withId(1L)
+				.withNome("Nome")
+				.withCnpj("12345678912345")
+				.build();
+
 		produto = Produto.builder()
 				.withId(1L)
 				.withNome("iPhone")

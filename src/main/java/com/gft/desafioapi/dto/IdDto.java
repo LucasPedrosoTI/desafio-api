@@ -2,14 +2,14 @@ package com.gft.desafioapi.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class AbstractDtoId {
+public class IdDto {
 
 	@ApiModelProperty(example = "1", position = -1)
 	private Long id;
 
-	public AbstractDtoId() {}
+	public IdDto() {}
 
-	public AbstractDtoId(
+	public IdDto(
 			Long id) {
 		this.id = id;
 	}

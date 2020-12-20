@@ -2,9 +2,11 @@ package com.gft.desafioapi.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -35,22 +37,17 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 	inverseJoinColumns = @JoinColumn(name = "produto_id"))
 	private List<Produto> produtos;
 
-	public Venda() {}
-
-	public Venda(
-			Long id,
-			BigDecimal totalCompra,
-			LocalDate dataCompra,
-			Cliente cliente,
-			Fornecedor fornecedor,
-			List<Produto> produtos) {
-		super(id);
-		this.totalCompra = totalCompra;
-		this.dataCompra = dataCompra;
-		this.cliente = cliente;
-		this.fornecedor = fornecedor;
-		this.produtos = produtos;
+	@Generated("SparkTools")
+	private Venda(Builder builder) {
+		super(builder.id);
+		this.totalCompra = builder.totalCompra;
+		this.dataCompra = builder.dataCompra;
+		this.cliente = builder.cliente;
+		this.fornecedor = builder.fornecedor;
+		this.produtos = builder.produtos;
 	}
+
+	private Venda() {}
 
 	public BigDecimal getTotalCompra() { return totalCompra; }
 
@@ -110,7 +107,73 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 		Fornecedor fornecedor = coalesce(this.fornecedor, other.fornecedor);
 		List<Produto> produtos = coalesce(this.produtos, other.produtos);
 
-		return new Venda(id, totalCompra, dataCompra, cliente, fornecedor, produtos);
+		return builder()
+				.withId(id)
+				.withDataCompra(dataCompra)
+				.withTotalCompra(totalCompra)
+				.withCliente(cliente)
+				.withFornecedor(fornecedor)
+				.withProdutos(produtos)
+				.build();
+	}
+
+	/**
+	 * Creates builder to build {@link Venda}.
+	 * 
+	 * @return created builder
+	 */
+	@Generated("SparkTools")
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	/**
+	 * Builder to build {@link Venda}.
+	 */
+	@Generated("SparkTools")
+	public static final class Builder {
+		public Long id;
+		private BigDecimal totalCompra;
+		private LocalDate dataCompra;
+		private Cliente cliente;
+		private Fornecedor fornecedor;
+		private List<Produto> produtos = Collections.emptyList();
+
+		private Builder() {}
+
+		public Builder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withTotalCompra(BigDecimal totalCompra) {
+			this.totalCompra = totalCompra;
+			return this;
+		}
+
+		public Builder withDataCompra(LocalDate dataCompra) {
+			this.dataCompra = dataCompra;
+			return this;
+		}
+
+		public Builder withCliente(Cliente cliente) {
+			this.cliente = cliente;
+			return this;
+		}
+
+		public Builder withFornecedor(Fornecedor fornecedor) {
+			this.fornecedor = fornecedor;
+			return this;
+		}
+
+		public Builder withProdutos(List<Produto> produtos) {
+			this.produtos = produtos;
+			return this;
+		}
+
+		public Venda build() {
+			return new Venda(this);
+		}
 	}
 
 }

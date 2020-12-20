@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.gft.desafioapi.dto.venda.VendaDTO;
 import com.gft.desafioapi.dto.venda.VendaDTORequest;
+import com.gft.desafioapi.dto.venda.VendaDTOResponse;
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
@@ -29,55 +29,64 @@ public class VendaConverter {
 	@Autowired
 	ClienteRepository clienteRepository;
 
-	public VendaDTO entityToDto(Venda venda) {
+	public VendaDTOResponse entityToDtoResponse(Venda venda) {
 
-		return new VendaDTO(venda.getId(), venda.getTotalCompra(), venda.getDataCompra(), venda.getCliente(),
-				venda.getFornecedor(), venda.getProdutos());
+		return VendaDTOResponse.builder()
+				.withId(venda.getId())
+				.withTotalCompra(venda.getTotalCompra())
+				.withDataCompra(venda.getDataCompra())
+				.withCliente(venda.getCliente())
+				.withFornecedor(venda.getFornecedor())
+				.withProdutos(venda.getProdutos())
+				.build();
 	}
 
-	public List<VendaDTO> entityToDto(List<Venda> vendas) {
-		return vendas.stream().map(this::entityToDto).collect(Collectors.toList());
+	public Page<VendaDTOResponse> entityToDtoResponse(Page<Venda> vendas) {
+		return vendas.map(this::entityToDtoResponse);
 	}
 
-	public Page<VendaDTO> entityToDto(Page<Venda> vendas) {
-		return vendas.map(this::entityToDto);
+	public Venda dtoRequestToEntity(VendaDTORequest dto) {
+
+		Fornecedor fornecedor = findFornecedor(dto, fornecedorRepository);
+		Cliente cliente = findCliente(dto, clienteRepository);
+		List<Produto> produtos = findProdutos(dto, produtoRepository);
+
+		return Venda.builder()
+				.withDataCompra(dto.getDataCompra())
+				.withCliente(cliente)
+				.withFornecedor(fornecedor)
+				.withProdutos(produtos)
+				.build();
 	}
 
-	public Venda dtoToEntity(VendaDTO dto) {
-		return new Venda(dto.getId(), dto.getTotalCompra(), dto.getDataCompra(), dto.getCliente(), dto.getFornecedor(),
-				dto.getProdutos());
-	}
-
-	public Venda dtoToEntity(VendaDTORequest dto) {
-
-		Venda venda = new Venda();
-
-		Fornecedor fornecedor = null;
-		Cliente cliente = null;
-		List<Produto> produtos = null;
-
-		if (dto.getFornecedor() != null && dto.getFornecedor().getId() != null) {
-			fornecedor = fornecedorRepository.getOne(dto.getFornecedor().getId());
-		}
-
-		if (dto.getCliente() != null && dto.getCliente().getId() != null) {
-			cliente = clienteRepository.getOne(dto.getCliente().getId());
-		}
+	private List<Produto> findProdutos(VendaDTORequest dto,
+			ProdutoRepository produtoRepository) {
 
 		if (dto.getProdutos() != null) {
-			produtos = dto.getProdutos().stream().map(produto -> produtoRepository.getOne(produto.getId()))
+			return dto.getProdutos()
+					.stream()
+					.map(produto -> produtoRepository.getOne(produto.getId()))
 					.collect(Collectors.toList());
 		}
 
-		venda.setDataCompra(dto.getDataCompra());
-		venda.setCliente(cliente);
-		venda.setFornecedor(fornecedor);
-		venda.setProdutos(produtos);
-
-		return venda;
+		return null;
 	}
 
-	public List<Venda> dtoToEntity(List<VendaDTO> dtos) {
-		return dtos.stream().map(this::dtoToEntity).collect(Collectors.toList());
+	private Cliente findCliente(VendaDTORequest dto, ClienteRepository clienteRepository) {
+		if (dto.getCliente() != null && dto.getCliente().getId() != null) {
+			return clienteRepository.getOne(dto.getCliente().getId());
+		}
+
+		return null;
 	}
+
+	private Fornecedor findFornecedor(VendaDTORequest dto, FornecedorRepository fornecedorRepository) {
+
+		if (dto.getFornecedor() != null && dto.getFornecedor().getId() != null) {
+			return fornecedorRepository.getOne(dto.getFornecedor().getId());
+		}
+
+		return null;
+	}
+
 }
