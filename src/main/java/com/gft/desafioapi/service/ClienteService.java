@@ -37,20 +37,12 @@ public class ClienteService implements UserDetailsService {
 
 	public Page<Cliente> pesquisarClientes(ClienteFilter filter, Pageable pageable) {
 
-		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new ClienteFilter());
-
-		//		final String nome = Optional.ofNullable(filter.getNome()).orElse("");
-		//		final String email = Optional.ofNullable(filter.getEmail()).orElse("");
-		//		final String documento = Optional.ofNullable(filter.getDocumento()).orElse("");
-		//		final LocalDate dataCadastroDe = Optional.ofNullable(filter.getDataCadastroDe()).orElse(Constants.MIN_DATE);
-		//		final LocalDate dataCadastroAte = Optional.ofNullable(filter.getDataCadastroAte()).orElse(Constants.MAX_DATE);
-
 		return clienteRepository.pesquisarClientes(
-				filter.getValueFrom("nome", verifiedFilter),
-				filter.getValueFrom("email", verifiedFilter),
-				filter.getValueFrom("documento", verifiedFilter),
-				LocalDate.parse(filter.getValueFrom("dataCadastroDe", verifiedFilter)),
-				LocalDate.parse(filter.getValueFrom("dataCadastroAte", verifiedFilter)),
+				filter.getNome(),
+				filter.getEmail(),
+				filter.getDocumento(),
+				filter.getDataCadastroDe(),
+				filter.getDataCadastroAte(),
 				pageable);
 	}
 
@@ -62,7 +54,7 @@ public class ClienteService implements UserDetailsService {
 			cliente.setDataCadastro(LocalDate.now());
 		}
 
-		cliente.setSenha(this.encoder.encode(cliente.getSenha()));
+		cliente.setSenha(encoder.encode(cliente.getSenha()));
 
 		return this.clienteRepository.save(cliente);
 
@@ -81,11 +73,11 @@ public class ClienteService implements UserDetailsService {
 			clienteAtualizado.setSenha(this.encoder.encode(cliente.getSenha()));
 		}
 
-		return this.clienteRepository.save(clienteAtualizado);
+		return clienteRepository.save(clienteAtualizado);
 	}
 
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
-		this.clienteRepository.deleteById(id);
+		clienteRepository.deleteById(id);
 
 		return Constants.MAP_SUCCESS_TRUE;
 	}

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.gft.desafioapi.utils.Constants;
 
-public class ProdutoFilter implements FilterNormalizer {
+public class ProdutoFilter {
 
 	private String nome = "";
 	private String codigoProduto = "";

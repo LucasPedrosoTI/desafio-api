@@ -73,8 +73,7 @@ public class FornecedorServiceTest {
 	}
 
 	@Test
-	void deveNormalizarFilterDaPesquisa() throws Exception {
-		filter.setNome(null);
+	void deveRealizarPesquisa() throws Exception {
 
 		fornecedorService.pesquisarFornecedores(filter, pageable);
 

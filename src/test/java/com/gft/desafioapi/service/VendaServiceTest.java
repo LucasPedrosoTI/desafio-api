@@ -133,9 +133,7 @@ class VendaServiceTest {
 	}
 
 	@Test
-	void deveNormalizarFilterDaPesquisa() throws Exception {
-		filter.setTotalCompraDe(null);
-
+	void deveRealizarPesquisa() throws Exception {
 		vendaService.pesquisarVendas(filter, pageable);
 
 		verify(vendaRepository).pesquisarVendas(Constants.MIN_DATE, Constants.MAX_DATE, BigDecimal.ZERO,

@@ -1,7 +1,6 @@
 package com.gft.desafioapi.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,20 +37,18 @@ public class ProdutoService {
 
 	public Page<Produto> pesquisarProdutos(ProdutoFilter filter, Pageable pageable) {
 
-		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new ProdutoFilter());
-
-		return this.produtoRepository.pesquisarProdutos(
-				filter.getValueFrom("nome", verifiedFilter),
-				filter.getValueFrom("codigoProduto", verifiedFilter),
-				new BigDecimal(filter.getValueFrom("valorDe", verifiedFilter)),
-				new BigDecimal(filter.getValueFrom("valorAte", verifiedFilter)),
-				Long.parseLong(filter.getValueFrom("quantidadeDe", verifiedFilter)),
-				Long.parseLong(filter.getValueFrom("quantidadeAte", verifiedFilter)),
-				new BigDecimal(filter.getValueFrom("valorPromoDe", verifiedFilter)),
-				new BigDecimal(filter.getValueFrom("valorPromoAte", verifiedFilter)),
+		return produtoRepository.pesquisarProdutos(
+				filter.getNome(),
+				filter.getCodigoProduto(),
+				filter.getValorDe(),
+				filter.getValorAte(),
+				filter.getQuantidadeDe(),
+				filter.getQuantidadeAte(),
+				filter.getValorPromoDe(),
+				filter.getValorPromoAte(),
 				pageable);
-
 	}
+
 
 
 	public Produto findProdutoById(Long id) {

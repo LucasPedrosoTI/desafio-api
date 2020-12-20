@@ -8,7 +8,6 @@ import java.util.Map;
 
 public interface FilterNormalizer {
 
-
 	default Map<String, Map<String, Object>> removeNullValues(FilterNormalizer filter, FilterNormalizer standard) {
 
 		List<Field> fields = Arrays.asList(filter.getClass().getDeclaredFields());
@@ -27,7 +26,6 @@ public interface FilterNormalizer {
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-
 
 		});
 

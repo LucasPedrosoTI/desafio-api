@@ -6,7 +6,7 @@ import com.gft.desafioapi.utils.Constants;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class ClienteFilter implements FilterNormalizer {
+public class ClienteFilter {
 
 	@ApiModelProperty(value = "Nome do cliente")
 	private String nome = "";

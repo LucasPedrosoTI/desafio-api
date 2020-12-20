@@ -25,11 +25,9 @@ public class FornecedorService {
 
 	public Page<Fornecedor> pesquisarFornecedores(FornecedorFilter filter, Pageable pageable) {
 
-		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new FornecedorFilter());
-
 		return fornecedorRepository.findByNomeContainingAndCnpjContaining(
-				filter.getValueFrom("nome", verifiedFilter),
-				filter.getValueFrom("cnpj", verifiedFilter),
+				filter.getNome(),
+				filter.getCnpj(),
 				pageable);
 	}
 

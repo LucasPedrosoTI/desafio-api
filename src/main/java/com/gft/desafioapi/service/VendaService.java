@@ -1,7 +1,6 @@
 package com.gft.desafioapi.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,15 +26,21 @@ public class VendaService {
 
 	public Page<Venda> pesquisarVendas(VendaFilter filter, Pageable pageable) {
 
-		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new VendaFilter());
+		//		Map<String, Map<String, Object>> verifiedFilter = filter.removeNullValues(filter, new VendaFilter());
 
+		//		return vendaRepository.pesquisarVendas(
+		//				LocalDate.parse(filter.getValueFrom("dataCompraDe", verifiedFilter)),
+		//				LocalDate.parse(filter.getValueFrom("dataCompraAte",
+		//						verifiedFilter)),
+		//				new BigDecimal(filter.getValueFrom("totalCompraDe", verifiedFilter)),
+		//				new BigDecimal(filter.getValueFrom("totalCompraAte",
+		//						verifiedFilter)),
+		//				pageable);
 		return vendaRepository.pesquisarVendas(
-				LocalDate.parse(filter.getValueFrom("dataCompraDe", verifiedFilter)),
-				LocalDate.parse(filter.getValueFrom("dataCompraAte",
-						verifiedFilter)),
-				new BigDecimal(filter.getValueFrom("totalCompraDe", verifiedFilter)),
-				new BigDecimal(filter.getValueFrom("totalCompraAte",
-						verifiedFilter)),
+				filter.getDataCompraDe(),
+				filter.getDataCompraAte(),
+				filter.getTotalCompraDe(),
+				filter.getTotalCompraAte(),
 				pageable);
 	}
 

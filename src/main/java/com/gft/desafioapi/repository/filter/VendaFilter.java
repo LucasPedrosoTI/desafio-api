@@ -7,7 +7,7 @@ import com.gft.desafioapi.utils.Constants;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class VendaFilter implements FilterNormalizer {
+public class VendaFilter {
 
 	@ApiModelProperty(value = "Data inicial de compra", allowEmptyValue = true)
 	private LocalDate dataCompraDe = Constants.MIN_DATE;
