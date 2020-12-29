@@ -20,13 +20,13 @@ public class ClienteConverter {
 	}
 
 	public Cliente dtoRequestToEntity(ClienteDTORequest dto) {
-		Cliente cliente = new Cliente();
-		cliente.setNome(dto.getNome());
-		cliente.setEmail(dto.getEmail());
-		cliente.setSenha(dto.getSenha());
-		cliente.setDocumento(dto.getDocumento());
 
-		return cliente;
+		return Cliente.builder()
+				.withNome(dto.getNome())
+				.withEmail(dto.getEmail())
+				.withSenha(dto.getSenha())
+				.withDocumento(dto.getDocumento())
+				.build();
 	}
 
 }

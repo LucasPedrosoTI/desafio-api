@@ -71,7 +71,7 @@ public class ProdutoDTORequest {
 		this.fornecedor = builder.fornecedor;
 	}
 
-	public ProdutoDTORequest() {
+	private ProdutoDTORequest() {
 	}
 
 	public String getNome() {

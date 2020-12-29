@@ -6,14 +6,14 @@ import org.springframework.hateoas.RepresentationModel;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class AbstractDTO extends RepresentationModel<AbstractDTO> {
+public class AbstractDTOResponse extends RepresentationModel<AbstractDTOResponse> {
 
 	@ApiModelProperty(example = "1", position = -1)
 	private Long id;
 
-	public AbstractDTO() {}
+	public AbstractDTOResponse() {}
 
-	public AbstractDTO(
+	public AbstractDTOResponse(
 			Long id) {
 		this.id = id;
 	}
@@ -42,7 +42,7 @@ public class AbstractDTO extends RepresentationModel<AbstractDTO> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AbstractDTO other = (AbstractDTO) obj;
+		AbstractDTOResponse other = (AbstractDTOResponse) obj;
 		return Objects.equals(id, other.id);
 	}
 

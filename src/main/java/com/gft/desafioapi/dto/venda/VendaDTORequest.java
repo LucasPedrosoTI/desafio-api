@@ -36,13 +36,14 @@ public class VendaDTORequest {
 	@JsonDeserialize(using = CustomProdutosDeserializer.class)
 	private List<IdDto> produtos;
 
-	@Generated("SparkTools")
 	private VendaDTORequest(Builder builder) {
 		this.dataCompra = builder.dataCompra;
 		this.cliente = builder.cliente;
 		this.fornecedor = builder.fornecedor;
 		this.produtos = builder.produtos;
 	}
+
+	private VendaDTORequest() {}
 
 	public LocalDate getDataCompra() {
 		return dataCompra;

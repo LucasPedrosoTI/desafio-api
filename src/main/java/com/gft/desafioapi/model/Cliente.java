@@ -1,7 +1,6 @@
 package com.gft.desafioapi.model;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.Email;
@@ -10,6 +9,14 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gft.desafioapi.utils.Coalesce;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 
@@ -30,89 +37,13 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCadastro;
 
-	public Cliente() {
-	}
-
-	public Cliente(Long id, String nome, String email, String senha, String documento, LocalDate dataCadastro) {
-		super(id);
-		this.nome = nome;
-		this.email = email;
-		this.senha = senha;
-		this.documento = documento;
-		this.dataCadastro = dataCadastro;
-	}
-
-	public Cliente(
-			Long id) {
-		super(id);
-	}
-
-	public String getNome() {
-		return this.nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getEmail() {
-		return this.email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getSenha() {
-		return this.senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public String getDocumento() {
-		return this.documento;
-	}
-
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-
-	public LocalDate getDataCadastro() {
-		return this.dataCadastro;
-	}
-
-	public void setDataCadastro(LocalDate dataCadastro) {
-		this.dataCadastro = dataCadastro;
-	}
-
-	@Override
-	public String toString() {
-		return "Cliente [nome=" + this.nome + ", email=" + this.email + ", senha=" + this.senha + ", documento="
-				+ this.documento + ", dataCadastro=" + this.dataCadastro + ", getId()=" + this.getId() + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(this.dataCadastro, this.documento, this.email, this.nome, this.senha);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (this.getClass() != obj.getClass())
-			return false;
-		Cliente other = (Cliente) obj;
-		return Objects.equals(this.dataCadastro, other.dataCadastro) && Objects.equals(this.documento, other.documento)
-				&& Objects.equals(this.email, other.email) && Objects.equals(this.nome, other.nome)
-				&& Objects.equals(this.senha, other.senha);
+	private Cliente(Builder builder) {
+		super(builder.id);
+		this.nome = builder.nome;
+		this.email = builder.email;
+		this.senha = builder.senha;
+		this.documento = builder.documento;
+		this.dataCadastro = builder.dataCadastro;
 	}
 
 	@Override
@@ -124,7 +55,64 @@ public class Cliente extends AbstractEntity implements Coalesce<Cliente> {
 		String documento = this.coalesce(this.getDocumento(), other.getDocumento());
 		LocalDate dataCadastro = this.coalesce(this.getDataCadastro(), other.getDataCadastro());
 
-		return new Cliente(id, nome, email, senha, documento, dataCadastro);
+		return builder()
+				.withId(id)
+				.withNome(nome)
+				.withEmail(email)
+				.withSenha(senha)
+				.withDocumento(documento)
+				.withDataCadastro(dataCadastro)
+				.build();
+
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static final class Builder {
+		private Long id;
+		private String nome;
+		private String email;
+		private String senha;
+		private String documento;
+		private LocalDate dataCadastro;
+
+		private Builder() {}
+
+		public Builder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withNome(String nome) {
+			this.nome = nome;
+			return this;
+		}
+
+		public Builder withEmail(String email) {
+			this.email = email;
+			return this;
+		}
+
+		public Builder withSenha(String senha) {
+			this.senha = senha;
+			return this;
+		}
+
+		public Builder withDocumento(String documento) {
+			this.documento = documento;
+			return this;
+		}
+
+		public Builder withDataCadastro(LocalDate dataCadastro) {
+			this.dataCadastro = dataCadastro;
+			return this;
+		}
+
+		public Cliente build() {
+			return new Cliente(this);
+		}
 	}
 
 }

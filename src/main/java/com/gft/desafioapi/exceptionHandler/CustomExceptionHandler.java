@@ -115,7 +115,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ DataIntegrityViolationException.class, ConstraintViolationException.class,
-			MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
+		MethodArgumentTypeMismatchException.class, PropertyReferenceException.class,
 			InvalidDataAccessApiUsageException.class, SQLException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
 		String mensagemUsuario = this.messageSource.getMessage(RECURSO_OPERACAO_NAO_PERMITIDA, null,
@@ -128,7 +128,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ BadCredentialsException.class, InvalidGrantException.class, UsernameNotFoundException.class,
-			AuthenticationException.class, RequestRejectedException.class })
+		AuthenticationException.class, RequestRejectedException.class })
 	public ResponseEntity<Object> handleBadCredentialsException(Exception ex, WebRequest request) {
 
 		String mensagemUsuario = this.messageSource.getMessage("recurso.acesso-negado", null,

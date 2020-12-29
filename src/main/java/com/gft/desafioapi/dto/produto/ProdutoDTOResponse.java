@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gft.desafioapi.dto.AbstractDTO;
+import com.gft.desafioapi.dto.AbstractDTOResponse;
 import com.gft.desafioapi.model.CategoriaEnum;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorDeserializer;
@@ -24,7 +24,7 @@ import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerialize
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class ProdutoDTOResponse extends AbstractDTO {
+public class ProdutoDTOResponse extends AbstractDTOResponse {
 
 	@ApiModelProperty(example = "Redmi Note 9", allowEmptyValue = false, required = true)
 	@NotBlank
@@ -80,7 +80,7 @@ public class ProdutoDTOResponse extends AbstractDTO {
 		this.fornecedor = builder.fornecedor;
 	}
 
-	public ProdutoDTOResponse() {
+	private ProdutoDTOResponse() {
 	}
 
 	public String getNome() {

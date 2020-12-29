@@ -1,7 +1,6 @@
 package com.gft.desafioapi.model;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -17,6 +16,14 @@ import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorDeseriali
 import com.gft.desafioapi.repository.serializer.CustomProdutoFornecedorSerializer;
 import com.gft.desafioapi.utils.Coalesce;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
@@ -30,7 +37,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 
 	private BigDecimal valor;
 
-	private Boolean promocao;
+	private boolean promocao;
 
 	private BigDecimal valorPromo;
 
@@ -61,119 +68,6 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 		this.fornecedor = builder.fornecedor;
 	}
 
-	public Produto() {
-	}
-
-	public Produto(
-			Long id) {
-		super(id);
-	}
-
-	public String getNome() {
-		return this.nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getCodigoProduto() {
-		return this.codigoProduto;
-	}
-
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
-	}
-
-	public BigDecimal getValor() {
-		return this.valor;
-	}
-
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
-	}
-
-	public Boolean isPromocao() {
-		return this.promocao;
-	}
-
-	public void setPromocao(Boolean promocao) {
-		this.promocao = promocao;
-	}
-
-	public BigDecimal getValorPromo() {
-		return this.valorPromo;
-	}
-
-	public void setValorPromo(BigDecimal valorPromo) {
-		this.valorPromo = valorPromo;
-	}
-
-	public String getImagem() {
-		return this.imagem;
-	}
-
-	public void setImagem(String imagem) {
-		this.imagem = imagem;
-	}
-
-	public CategoriaEnum getCategoria() {
-		return this.categoria;
-	}
-
-	public void setCategoria(CategoriaEnum categoria) {
-		this.categoria = categoria;
-	}
-
-	public Long getQuantidade() {
-		return this.quantidade;
-	}
-
-	public void setQuantidade(Long quantidade) {
-		this.quantidade = quantidade;
-	}
-
-	public Fornecedor getFornecedor() {
-		return this.fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	@Override
-	public String toString() {
-		return "Produto [nome=" + this.nome + ", codigoProduto=" + this.codigoProduto + ", valor=" + this.valor
-				+ ", promocao=" + this.promocao + ", valorPromo=" + this.valorPromo + ", imagem=" + this.imagem
-				+ ", categoria=" + this.categoria + ", quantidade=" + this.quantidade + ", fornecedor="
-				+ this.fornecedor + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(this.categoria, this.codigoProduto, this.fornecedor, this.imagem,
-				this.nome, this.promocao, this.quantidade, this.valor, this.valorPromo);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (this.getClass() != obj.getClass())
-			return false;
-		Produto other = (Produto) obj;
-		return this.categoria == other.categoria && Objects.equals(this.codigoProduto, other.codigoProduto)
-				&& Objects.equals(this.fornecedor, other.fornecedor) && Objects.equals(this.imagem, other.imagem)
-				&& Objects.equals(this.nome, other.nome) && Objects.equals(this.promocao, other.promocao)
-				&& Objects.equals(this.quantidade, other.quantidade) && Objects.equals(this.valor, other.valor)
-				&& Objects.equals(this.valorPromo, other.valorPromo);
-	}
-
 	@Override
 	public Produto coalesce(Produto other, Long id) {
 		BigDecimal valorPromoCoalesced = null;
@@ -198,18 +92,10 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 				.withFornecedor(fornecedorCoalesced).build();
 	}
 
-	/**
-	 * Creates builder to build {@link Produto}.
-	 *
-	 * @return created builder
-	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	/**
-	 * Builder to build {@link Produto}.
-	 */
 	public static final class Builder {
 		private Long id;
 		private String nome;
@@ -222,8 +108,7 @@ public class Produto extends AbstractEntity implements Coalesce<Produto> {
 		private Long quantidade;
 		private Fornecedor fornecedor;
 
-		private Builder() {
-		}
+		private Builder() {}
 
 		public Builder withId(Long id) {
 			this.id = id;

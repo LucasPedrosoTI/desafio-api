@@ -24,7 +24,7 @@ import com.gft.desafioapi.repository.ClienteRepository;
 import com.gft.desafioapi.repository.filter.ClienteFilter;
 import com.gft.desafioapi.utils.Constants;
 
-public class ClientServiceTest {
+class ClientServiceTest {
 
 	@Mock
 	private ClienteRepository clienteRepository;
@@ -42,10 +42,17 @@ public class ClientServiceTest {
 	private Cliente clienteEmBanco;
 	@BeforeEach
 	public void setup() throws Exception {
-		cliente = new Cliente(1L, "Nome", "email@email.com", "123456", "123456789", null);
+		cliente = Cliente.builder()
+				.withId(1L)
+				.withNome("Nome")
+				.withEmail("email@email.com")
+				.withSenha("123456")
+				.withDocumento("123456789")
+				.build();
 
-		clienteEmBanco = new Cliente(1L, "Nome", "email@email.com",
-				"$2a$10$Km3aDWfDD.yfONVpgm5UIOpq8N2NLLeTZtfz7gGOp3WPW8fMWYH3G", "123456789", LocalDate.now());
+		clienteEmBanco = cliente;
+		clienteEmBanco.setSenha("$2a$10$Km3aDWfDD.yfONVpgm5UIOpq8N2NLLeTZtfz7gGOp3WPW8fMWYH3G");
+		clienteEmBanco.setDataCadastro(LocalDate.now());
 
 		clienteService = new ClienteService();
 		MockitoAnnotations.openMocks(this);
@@ -100,7 +107,7 @@ public class ClientServiceTest {
 
 	@Test
 	void deveAtualizarClienteNoBancoEncodandoSenhaPassada() throws Exception {
-		Cliente atualizacao = new Cliente(null, "Nome Completo", null, "123456", null, null);
+		Cliente atualizacao = Cliente.builder().withNome("Nome Completo").withSenha("123456").build();
 
 		mockEncodarSenha();
 
@@ -115,7 +122,9 @@ public class ClientServiceTest {
 
 	@Test
 	void naoDeveEncodarCasoSenhaSejaPassadaNulaNoUpdate() throws Exception {
-		Cliente atualizacao = new Cliente(null, "Nome Completo", null, null, null, null);
+		Cliente atualizacao = Cliente.builder()
+				.withNome("Nome Completo")
+				.build();
 
 		mockFindById();
 

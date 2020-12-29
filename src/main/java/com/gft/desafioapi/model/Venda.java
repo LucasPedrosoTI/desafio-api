@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Generated;
 import javax.persistence.Entity;
@@ -15,6 +14,14 @@ import javax.persistence.ManyToOne;
 
 import com.gft.desafioapi.utils.Coalesce;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class Venda extends AbstractEntity implements Coalesce<Venda> {
 
@@ -47,58 +54,6 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 		this.produtos = builder.produtos;
 	}
 
-	private Venda() {}
-
-	public BigDecimal getTotalCompra() { return totalCompra; }
-
-	public void setTotalCompra(BigDecimal totalCompra) { this.totalCompra = totalCompra; }
-
-	public LocalDate getDataCompra() { return dataCompra; }
-
-	public void setDataCompra(LocalDate dataCompra) { this.dataCompra = dataCompra; }
-
-	public Cliente getCliente() { return cliente; }
-
-	public void setCliente(Cliente cliente) { this.cliente = cliente; }
-
-	public Fornecedor getFornecedor() { return fornecedor; }
-
-	public void setFornecedor(Fornecedor fornecedor) { this.fornecedor = fornecedor; }
-
-	public List<Produto> getProdutos() { return produtos; }
-
-	public void setProdutos(List<Produto> produtos) { this.produtos = produtos; }
-
-	@Override
-	public String toString() {
-		return "{" + " totalCompra='" + getTotalCompra() + "'" + ", dataCompra='" + getDataCompra() + "'"
-				+ ", cliente='"
-				+ getCliente() + "'" + ", fornecedor='" + getFornecedor() + "'" + ", produtos='" + getProdutos() + "'"
-				+ "}";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(cliente, dataCompra, fornecedor, produtos, totalCompra);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Venda other = (Venda) obj;
-		return Objects.equals(cliente, other.cliente) && Objects.equals(dataCompra, other.dataCompra)
-				&& Objects.equals(fornecedor, other.fornecedor) && Objects.equals(produtos, other.produtos)
-				&& Objects.equals(totalCompra, other.totalCompra);
-	}
-
 	@Override
 	public Venda coalesce(Venda other, Long id) {
 		BigDecimal totalCompra = coalesce(this.totalCompra, other.totalCompra);
@@ -122,7 +77,6 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 	 * 
 	 * @return created builder
 	 */
-	@Generated("SparkTools")
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -130,7 +84,6 @@ public class Venda extends AbstractEntity implements Coalesce<Venda> {
 	/**
 	 * Builder to build {@link Venda}.
 	 */
-	@Generated("SparkTools")
 	public static final class Builder {
 		public Long id;
 		private BigDecimal totalCompra;

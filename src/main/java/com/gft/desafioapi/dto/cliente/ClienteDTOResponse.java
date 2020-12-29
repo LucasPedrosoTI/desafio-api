@@ -6,11 +6,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import com.gft.desafioapi.dto.AbstractDTO;
+import com.gft.desafioapi.dto.AbstractDTOResponse;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class ClienteDTOResponse extends AbstractDTO {
+public class ClienteDTOResponse extends AbstractDTOResponse {
 
 	@ApiModelProperty(example = "Marco Santos", allowEmptyValue = false, required = true)
 	@NotBlank

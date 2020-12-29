@@ -11,14 +11,14 @@ import org.hibernate.validator.constraints.br.CNPJ;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gft.desafioapi.dto.AbstractDTO;
+import com.gft.desafioapi.dto.AbstractDTOResponse;
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.serializer.CustomProdutosSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class FornecedorDTOResponse extends AbstractDTO {
+public class FornecedorDTOResponse extends AbstractDTOResponse {
 
 
 	@ApiModelProperty(example = "Apple", allowEmptyValue = false, required = true)

@@ -7,7 +7,7 @@ import java.util.Random;
 
 import org.springframework.data.domain.Page;
 
-import com.gft.desafioapi.dto.AbstractDTO;
+import com.gft.desafioapi.dto.AbstractDTOResponse;
 import com.gft.desafioapi.model.AbstractEntity;
 
 @SuppressWarnings("unchecked")
@@ -25,18 +25,18 @@ public class ApiUtils {
 		}
 	}
 
-	public static <T extends AbstractDTO> T createRelListAllLink(T dto, Class<?> resource) {
+	public static <T extends AbstractDTOResponse> T createRelListAllLink(T dto, Class<?> resource) {
 		return (T) dto.add(linkTo(resource).withRel("listAll"));
 	}
 
 
-	public static <T extends AbstractDTO> T createSelfLink(T dto, Class<?> resource) {
+	public static <T extends AbstractDTOResponse> T createSelfLink(T dto, Class<?> resource) {
 		return (T) dto.add(linkTo(resource).slash(dto.getId())
 				.withSelfRel());
 	}
 
 
-	public static <T extends AbstractDTO> Page<T> createSelfLink(Page<T> dtos, Class<?> resource) {
+	public static <T extends AbstractDTOResponse> Page<T> createSelfLink(Page<T> dtos, Class<?> resource) {
 		return dtos.map(dto -> createSelfLink(dto, resource));
 	}
 

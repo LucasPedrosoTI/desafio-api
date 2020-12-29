@@ -12,12 +12,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.gft.desafioapi.dto.IdDto;
 import com.gft.desafioapi.repository.FornecedorRepository;
+import com.gft.desafioapi.utils.Constants;
 
 @Component
 public class CustomProdutoFornecedorDeserializer extends StdDeserializer<IdDto> {
 
 	@Autowired
-	FornecedorRepository fornecedorRepository;
+	transient FornecedorRepository fornecedorRepository;
 
 	private static final long serialVersionUID = -839983745171929649L;
 
@@ -37,7 +38,7 @@ public class CustomProdutoFornecedorDeserializer extends StdDeserializer<IdDto> 
 		JsonNode node = jsonparser.getCodec().readTree(jsonparser);
 
 		if (!node.has("id")) {
-			throw new EmptyResultDataAccessException("Fornecedor não passado na requisição", 1);
+			throw new EmptyResultDataAccessException(Constants.FORNECEDOR_INEXISTENTE, 1);
 		}
 
 		id = node.get("id")

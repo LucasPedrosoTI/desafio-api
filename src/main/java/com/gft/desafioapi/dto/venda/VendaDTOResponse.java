@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gft.desafioapi.dto.AbstractDTO;
+import com.gft.desafioapi.dto.AbstractDTOResponse;
 import com.gft.desafioapi.model.Cliente;
 import com.gft.desafioapi.model.Fornecedor;
 import com.gft.desafioapi.model.Produto;
@@ -25,7 +25,7 @@ import com.gft.desafioapi.repository.serializer.CustomVendaClienteSerializer;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class VendaDTOResponse extends AbstractDTO {
+public class VendaDTOResponse extends AbstractDTOResponse {
 
 	@ApiModelProperty(hidden = true)
 	@DecimalMin(value = "0")
@@ -51,8 +51,6 @@ public class VendaDTOResponse extends AbstractDTO {
 	@JsonDeserialize(using = CustomProdutosDeserializer.class)
 	private List<Produto> produtos;
 
-
-	@Generated("SparkTools")
 	private VendaDTOResponse(Builder builder) {
 		super(builder.id);
 		this.totalCompra = builder.totalCompra;
