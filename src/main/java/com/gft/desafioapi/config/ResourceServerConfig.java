@@ -29,14 +29,12 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	ClienteService clienteService;
 
-
 	@Autowired
 	@Lazy
 	BCryptPasswordEncoder passwordEncoder;
 
 	protected static final String[] AUTH_WHITELIST = { "/swagger-ui.html/**", "/configuration/**",
-			"/swagger-resources/**",
-			"/v2/api-docs", "/webjars/**", "/cadastrar", "/uploads/**" };
+			"/swagger-resources/**", "/v2/api-docs", "/webjars/**", "/cadastrar", "/**/imagem" };
 
 	@Override
 	@Bean
@@ -54,9 +52,8 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-				.allowedOrigins("*")
-				.allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
+				registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE",
+						"OPTIONS");
 			}
 		};
 	}
@@ -68,12 +65,10 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
-		.and()
-		.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll().anyRequest().authenticated()
-		.and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
-	}	
+		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
+				.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll().anyRequest().authenticated().and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {

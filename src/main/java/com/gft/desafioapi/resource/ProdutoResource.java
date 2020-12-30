@@ -142,9 +142,13 @@ public class ProdutoResource {
 	}
 
 	@GetMapping("/{id}/imagem")
-	public ResponseEntity<ByteArrayResource> baixarImagem(@PathVariable Long id) {
+	public ResponseEntity<Object> baixarImagem(@PathVariable Long id) {
 
 		Produto produto = produtoService.findProdutoById(id);
+
+		if (produto.getImagemBytes() == null || produto.getContentType() == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensagem", "produto sem imagem ou sem tipo"));
+		}
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(produto.getContentType()))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + produto.getImagem() + "\"")

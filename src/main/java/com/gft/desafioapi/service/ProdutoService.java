@@ -129,7 +129,7 @@ public class ProdutoService {
 	}
 
 	private void serializeProdutoImagem(Produto produto) {
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("produtos/")
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("api/produtos/")
 				.path(produto.getId().toString()).path("/imagem").toUriString();
 
 		produto.setImagem(fileDownloadUri);
