@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -35,9 +36,12 @@ public class ProdutoService {
 	@Autowired
 	FornecedorService fornecedorService;
 
+	@Value("${app.host}")
+	private String host;
+
 	public Page<Produto> pesquisarProdutos(ProdutoFilter filter, Pageable pageable) {
 
-		return produtoRepository.pesquisarProdutos(
+		Page<Produto> produtos = produtoRepository.pesquisarProdutos(
 				filter.getNome(),
 				filter.getCodigoProduto(),
 				filter.getValorDe(),
@@ -47,14 +51,20 @@ public class ProdutoService {
 				filter.getValorPromoDe(),
 				filter.getValorPromoAte(),
 				pageable);
+
+		serializeProdutoImagem(produtos);
+
+		return produtos;
 	}
 
-
-
 	public Produto findProdutoById(Long id) {
-		return this.produtoRepository.findById(id).orElseThrow(() -> {
+		Produto produto = produtoRepository.findById(id).orElseThrow(() -> {
 			throw new EmptyResultDataAccessException(1);
 		});
+
+		serializeProdutoImagem(produto);
+
+		return produto;
 	}
 
 	public Produto create(Produto produto) {
@@ -67,7 +77,11 @@ public class ProdutoService {
 
 		fornecedorService.findFornecedorById(produto.getFornecedor().getId());
 
-		return produtoRepository.save(produto);
+		Produto produtoSalvo = produtoRepository.save(produto);
+
+		serializeProdutoImagem(produtoSalvo);
+
+		return produtoSalvo;
 	}
 
 	public Produto update(Long id, @Valid Produto produto) {
@@ -76,7 +90,11 @@ public class ProdutoService {
 
 		validatePromocao(produtoAtualizado);
 
-		return produtoRepository.save(produtoAtualizado);
+		Produto produtoSalvo = produtoRepository.save(produtoAtualizado);
+
+		serializeProdutoImagem(produtoSalvo);
+
+		return produtoSalvo;
 	}
 
 	public ResponseEntity<Map<String, Boolean>> delete(Long id) {
@@ -98,11 +116,12 @@ public class ProdutoService {
 
 		produto.setImagem(fileName);
 
-		return produtoRepository.save(produto);
+		Produto produtoSalvo = produtoRepository.save(produto);
+		serializeProdutoImagem(produtoSalvo);
+
+		return produtoSalvo;
 
 	}
-
-
 
 	private void validatePromocao(Produto produto) {
 		if (Boolean.FALSE.equals(produto.isPromocao()) && Objects.nonNull(produto.getValorPromo())) {
@@ -118,6 +137,14 @@ public class ProdutoService {
 		if (Objects.isNull(produto.getFornecedor())) {
 			throw new EmptyResultDataAccessException(Constants.FORNECEDOR_INEXISTENTE, 1);
 		}
+	}
+
+	private void serializeProdutoImagem(Produto produto) {
+		produto.setImagem(host + "/uploads/" + produto.getImagem());
+	}
+
+	private void serializeProdutoImagem(Page<Produto> produtos) {
+		produtos.forEach(this::serializeProdutoImagem);
 	}
 
 }

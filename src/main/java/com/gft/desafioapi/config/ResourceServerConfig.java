@@ -14,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.gft.desafioapi.service.ClienteService;
 
@@ -31,8 +34,9 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 	@Lazy
 	BCryptPasswordEncoder passwordEncoder;
 
-	public static final String[] AUTH_WHITELIST = { "/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**",
-			"/v2/api-docs", "/webjars/**", "/cadastrar" };
+	protected static final String[] AUTH_WHITELIST = { "/swagger-ui.html/**", "/configuration/**",
+			"/swagger-resources/**",
+			"/v2/api-docs", "/webjars/**", "/cadastrar", "/uploads/**" };
 
 	@Override
 	@Bean
@@ -45,6 +49,18 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+				.allowedOrigins("*")
+				.allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
+			}
+		};
+	}
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(clienteService).passwordEncoder(passwordEncoder);
@@ -52,9 +68,12 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll().anyRequest().authenticated().and()
+		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+		.and()
+		.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll().anyRequest().authenticated()
+		.and()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
-	}
+	}	
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
