@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +67,7 @@ public class ProdutoResource {
 	@Cacheable(value = "custom-cache", key = "'ProdutosInCache'+#filter")
 	@ApiOperation("Lista todos os produtos")
 	@GetMapping
-	public Page<ProdutoDTOResponse> listarProdutos(
-			ProdutoFilter filter,
-			Pageable pageable) {
+	public Page<ProdutoDTOResponse> listarProdutos(ProdutoFilter filter, Pageable pageable) {
 		return createSelfLink(converter.entityToDtoResponse(produtoService.pesquisarProdutos(filter, pageable)), resource);
 	}
 
@@ -82,9 +82,7 @@ public class ProdutoResource {
 	@ApiOperation("Cadastra um novo produto")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ProdutoDTOResponse criarProduto(
-			@RequestBody @Valid ProdutoDTORequest dto,
-			HttpServletResponse response) {
+	public ProdutoDTOResponse criarProduto(@RequestBody @Valid ProdutoDTORequest dto, HttpServletResponse response) {
 
 		Produto produtoSalvo = produtoService.create(converter.dtoRequestToEntity(dto));
 
@@ -124,7 +122,8 @@ public class ProdutoResource {
 	@ApiOperation("Busca produtos por nome")
 	@GetMapping("/nome/{nome}")
 	public Page<ProdutoDTOResponse> encontrarProdutoPorNome(@PathVariable String nome, Pageable pageable) {
-		return createSelfLink(converter.entityToDtoResponse(produtoRepository.findByNomeContaining(nome, pageable)), resource);
+		return createSelfLink(converter.entityToDtoResponse(produtoRepository.findByNomeContaining(nome, pageable)),
+				resource);
 	}
 
 	@ApiOperation("Faz o upload de uma imagem")
@@ -137,10 +136,18 @@ public class ProdutoResource {
 
 			return ResponseEntity.ok(createSelfLink(dto, resource));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(Map.of("mensagemUsuario", "Operação não permitida", "mensagemDev",
-							ExceptionUtils.getRootCauseMessage(e)));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					Map.of("mensagemUsuario", "Operação não permitida", "mensagemDev", ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
 
+	@GetMapping("/{id}/imagem")
+	public ResponseEntity<ByteArrayResource> baixarImagem(@PathVariable Long id) {
+
+		Produto produto = produtoService.findProdutoById(id);
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(produto.getContentType()))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + produto.getImagem() + "\"")
+				.body(new ByteArrayResource(produto.getImagemBytes()));
+	}
 }

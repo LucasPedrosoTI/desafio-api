@@ -1,10 +1,6 @@
 package com.gft.desafioapi.service;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gft.desafioapi.model.Produto;
 import com.gft.desafioapi.repository.ProdutoRepository;
@@ -104,13 +101,9 @@ public class ProdutoService {
 		String fileName = ApiUtils.getRandomString() + "_"
 				+ StringUtils.cleanPath(Optional.ofNullable(imagem.getOriginalFilename()).orElse("no-name"));
 
-		String location = new File(".").getCanonicalPath() + "\\src\\main\\resources\\static\\uploads\\"; // "\\src\\main\\java\\com\\gft\\desafioapi\\WEB-INF\\images";
-
-		Path fileLocation = Paths.get(location + fileName);
-
-		Files.write(fileLocation, imagem.getBytes());
-
 		produto.setImagem(fileName);
+		produto.setImagemBytes(imagem.getBytes());
+		produto.setContentType(imagem.getContentType());
 
 		Produto produtoSalvo = produtoRepository.save(produto);
 		serializeProdutoImagem(produtoSalvo);
@@ -136,7 +129,10 @@ public class ProdutoService {
 	}
 
 	private void serializeProdutoImagem(Produto produto) {
-		produto.setImagem(host + "/uploads/" + produto.getImagem());
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("produtos/")
+				.path(produto.getId().toString()).path("/imagem").toUriString();
+
+		produto.setImagem(fileDownloadUri);
 	}
 
 	private void serializeProdutoImagem(Page<Produto> produtos) {
