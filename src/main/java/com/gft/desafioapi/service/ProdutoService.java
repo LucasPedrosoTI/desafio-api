@@ -1,5 +1,6 @@
 package com.gft.desafioapi.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,16 +42,9 @@ public class ProdutoService {
 
 	public Page<Produto> pesquisarProdutos(ProdutoFilter filter, Pageable pageable) {
 
-		Page<Produto> produtos = produtoRepository.pesquisarProdutos(
-				filter.getNome(),
-				filter.getCodigoProduto(),
-				filter.getValorDe(),
-				filter.getValorAte(),
-				filter.getQuantidadeDe(),
-				filter.getQuantidadeAte(),
-				filter.getValorPromoDe(),
-				filter.getValorPromoAte(),
-				pageable);
+		Page<Produto> produtos = produtoRepository.pesquisarProdutos(filter.getNome(), filter.getCodigoProduto(),
+				filter.getValorDe(), filter.getValorAte(), filter.getQuantidadeDe(), filter.getQuantidadeAte(),
+				filter.getValorPromoDe(), filter.getValorPromoAte(), pageable);
 
 		serializeProdutoImagem(produtos);
 
@@ -110,7 +104,9 @@ public class ProdutoService {
 		String fileName = ApiUtils.getRandomString() + "_"
 				+ StringUtils.cleanPath(Optional.ofNullable(imagem.getOriginalFilename()).orElse("no-name"));
 
-		Path fileLocation = Paths.get("src\\main\\resources\\static\\uploads\\" + fileName);
+		String location = new File(".").getCanonicalPath() + "\\src\\main\\resources\\static\\uploads\\"; // "\\src\\main\\java\\com\\gft\\desafioapi\\WEB-INF\\images";
+
+		Path fileLocation = Paths.get(location + fileName);
 
 		Files.write(fileLocation, imagem.getBytes());
 

@@ -33,6 +33,6 @@ public class DesafioApiApplication implements WebMvcConfigurer {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		// Register resource handler for images
 		registry.addResourceHandler("/uploads/**").addResourceLocations("classpath:/static/uploads/")
-		.setCacheControl(CacheControl.maxAge(2, TimeUnit.HOURS).cachePublic());
+				.setCacheControl(CacheControl.maxAge(2, TimeUnit.HOURS).cachePublic());
 	}
 }
